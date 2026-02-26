@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PE956KT8DY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+      'analytics_storage': 'denied',
+      'ad_storage': 'denied'
+    });
+    gtag('js', new Date());
+    gtag('config', 'G-PE956KT8DY');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Demo & ROI Calculator - ShortFormFactory</title>
+  <meta name="description" content="Try our AI-powered video editing demo and calculate your ROI. See how ShortFormFactory can transform your content strategy.">
+  <link rel="canonical" href="https://shortformfactory.com/demo">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Short Form Video Editing Services">
+  <meta property="og:title" content="Live Demo & ROI Calculator | ShortFormFactory">
+  <meta property="og:description" content="Try our AI-powered video editing demo and calculate your ROI. See how ShortFormFactory can transform your content strategy.">
+  <meta property="og:url" content="https://shortformfactory.com/demo">
+  <meta property="og:image" content="https://shortformfactory.com/assets/og-banner.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Short Form Video Editing Services">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Live Demo & ROI Calculator | ShortFormFactory">
+  <meta name="twitter:description" content="Try our AI-powered video editing demo and calculate your ROI. See how ShortFormFactory can transform your content strategy.">
+  <meta name="twitter:image" content="https://shortformfactory.com/assets/og-banner.png">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script defer src="https://cdn.vercel-analytics.com/v1/script.js"></script>
+  <script src="/cookie-consent.js" defer></script>
+  <style>
+    .demo-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+    
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-top: 3rem;
+    }
+    
+    .roi-calculator {
+      background: var(--panel);
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 2rem;
+    }
+    
+    .live-demo {
+      background: var(--panel);
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 2rem;
+    }
+    
+    .demo-video {
+      width: 100%;
+      height: 400px;
+      background: linear-gradient(135deg, rgba(198, 255, 64, 0.1), rgba(178, 255, 0, 0.05));
+      border: 1px solid rgba(198, 255, 64, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .demo-video iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 12px;
+    }
+    
+    .demo-placeholder {
+      text-align: center;
+      color: var(--muted);
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      display: block;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    
+    .form-input {
+      width: 100%;
+      background: #080808;
+      border: 1px solid #1b1b1b;
+      color: #fff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+      border-color: var(--neon);
+      box-shadow: 0 0 0 1px var(--neon);
+    }
+    
+    .roi-results {
+      background: linear-gradient(135deg, rgba(198, 255, 64, 0.1), rgba(178, 255, 0, 0.05));
+      border: 1px solid rgba(198, 255, 64, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      display: none;
+    }
+    
+    .roi-results.show {
+      display: block;
+    }
+    
+    .roi-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .roi-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--neon);
+    }
+    
+    .demo-controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .demo-btn {
+      background: var(--neon);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .demo-btn:hover {
+      background: #b2ff00;
+      transform: translateY(-2px);
+    }
+    
+    .demo-btn.secondary {
+      background: transparent;
+      color: var(--neon);
+      border: 1px solid var(--neon);
+    }
+    
+    .demo-btn.secondary:hover {
+      background: var(--neon);
+      color: #000;
+    }
+    
+    @media (max-width: 768px) {
+      .demo-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      
+      .demo-section {
+        padding: 2rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body class="demo">
+  <div class="bg-grid"></div>
+  
+  <header class="header" id="header">
+    <div class="header-content">
+      <a href="/" class="logo">
+        <img src="/assets/logo.svg" alt="ShortFormFactory" class="logo-img" width="40" height="40">
+        <span class="logo-text">ShortFormFactory</span>
+      </a>
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="nav" id="mainNav">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/services" class="nav-link">Services</a>
+        <a href="/blog" class="nav-link">Blog</a>
+        <a href="/order" class="nav-link">Order</a>
+        <a href="/contact" class="nav-link">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <section class="demo-section">
+      <div class="section-header">
+        <h1 class="section-title">See It In Action</h1>
+        <p class="section-subtitle">Try our AI-powered video editing demo and calculate your potential ROI</p>
+      </div>
+
+      <div class="demo-grid">
+        <div class="roi-calculator">
+          <h2>ROI Calculator</h2>
+          <p>Estimate your return on investment with our professional video editing services.</p>
+          
+          <div class="form-group">
+            <label class="form-label">Current Monthly Videos</label>
+            <input type="number" id="currentVideos" class="form-input" placeholder="10" value="10">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Average Views Per Video</label>
+            <input type="number" id="avgViews" class="form-input" placeholder="1000" value="1000">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Conversion Rate (%)</label>
+            <input type="number" id="conversionRate" class="form-input" placeholder="2" value="2" step="0.1">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Average Order Value ($)</label>
+            <input type="number" id="avgOrderValue" class="form-input" placeholder="100" value="100">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Service Package</label>
+            <select id="servicePackage" class="form-input">
+              <option value="basic">Basic Package - $25/video</option>
+              <option value="standard">Standard Package - $60/video</option>
+              <option value="premium">Premium Package - $140/video</option>
+            </select>
+          </div>
+          
+          <button class="demo-btn" onclick="calculateROI()">Calculate ROI</button>
+          
+          <div id="roiResults" class="roi-results">
+            <h3>Your Potential Results</h3>
+            <div class="roi-metric">
+              <span>Current Monthly Revenue:</span>
+              <span class="roi-value" id="currentRevenue">$0</span>
+            </div>
+            <div class="roi-metric">
+              <span>Projected Monthly Revenue:</span>
+              <span class="roi-value" id="projectedRevenue">$0</span>
+            </div>
+            <div class="roi-metric">
+              <span>Monthly Investment:</span>
+              <span class="roi-value" id="monthlyInvestment">$0</span>
+            </div>
+            <div class="roi-metric">
+              <span>Net Profit:</span>
+              <span class="roi-value" id="netProfit">$0</span>
+            </div>
+            <div class="roi-metric">
+              <span>ROI:</span>
+              <span class="roi-value" id="roiPercentage">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="live-demo">
+          <h2>Live Demo: Viral Captions Service</h2>
+          <p>Experience our highest retention service - animated captions that keep viewers watching 3x longer.</p>
+          
+          <div class="demo-video">
+            <div class="demo-placeholder">
+              <h3>Interactive Demo Coming Soon</h3>
+              <p>Try our viral captions demo and see the difference</p>
+              <div class="demo-controls">
+                <button class="demo-btn" onclick="startDemo()">Start Demo</button>
+                <button class="demo-btn secondary" onclick="resetDemo()">Reset</button>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-top: 2rem;">
+            <h3>Why Viral Captions?</h3>
+            <ul style="list-style: none; padding: 0;">
+              <li style="margin-bottom: 0.5rem;">✅ 3x longer watch time</li>
+              <li style="margin-bottom: 0.5rem;">✅ 85% of videos watched without sound</li>
+              <li style="margin-bottom: 0.5rem;">✅ Custom fonts & brand colors</li>
+              <li style="margin-bottom: 0.5rem;">✅ Animated word-by-word delivery</li>
+              <li style="margin-bottom: 0.5rem;">✅ Strategic emoji integration</li>
+            </ul>
+            
+            <div style="margin-top: 2rem;">
+              <h4>Pricing:</h4>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;">
+                <div style="text-align: center; padding: 1rem; background: #0b0b0b; border: 1px solid #1b1b1b; border-radius: 8px;">
+                  <div style="font-weight: 700; color: var(--neon);">Basic</div>
+                  <div style="font-size: 1.5rem; font-weight: 700;">$20</div>
+                  <div style="font-size: 0.9rem; color: var(--muted);">5 videos</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: #0b0b0b; border: 1px solid #1b1b1b; border-radius: 8px;">
+                  <div style="font-weight: 700; color: var(--neon);">Standard</div>
+                  <div style="font-size: 1.5rem; font-weight: 700;">$50</div>
+                  <div style="font-size: 0.9rem; color: var(--muted);">15 videos</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: #0b0b0b; border: 1px solid #1b1b1b; border-radius: 8px;">
+                  <div style="font-weight: 700; color: var(--neon);">Premium</div>
+                  <div style="font-size: 1.5rem; font-weight: 700;">$110</div>
+                  <div style="font-size: 0.9rem; color: var(--muted);">30 videos</div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 2rem; text-align: center;">
+              <a href="/order?service=viralCaptions" class="btn btn-primary">Try Viral Captions Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <div class="footer-logo">
+          <img src="/assets/logo.svg" alt="ShortFormFactory" width="50" height="50">
+          <h3>ShortFormFactory</h3>
+        </div>
+        <p>Professional short-form video editing services for agencies and businesses. Fast turnaround, transparent pricing, viral results.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/short.formfactory" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.405a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@shortformfactory" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.25 1.12 1.16 2.91 1.75 4.25 1.75v5.02c-1.76-.02-3.46-.46-4.95-1.31-.65-.4-1.26-.87-1.8-1.41-.01 2.86.02 5.73-.02 8.58-.03 1.23-.64 2.44-1.56 3.37-.92.93-2.13 1.55-3.37 1.56-1.24.01-2.45-.62-3.37-1.56-.93-.93-1.53-2.14-1.56-3.37-.03-2.85.01-5.72-.02-8.58.54.54 1.15 1.01 1.8 1.41 1.49.85 3.19 1.29 4.95 1.31v5.02c-1.34 0-3.13-.59-4.25-1.75-1.12-1.16-1.67-2.72-1.75-4.25-.02-1.3-.01-2.6-.02-3.91 0-1.3.01-2.6.02-3.9.01-1.53.63-3.09 1.75-4.25 1.12-1.16 2.91-1.75 4.25-1.75z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@shortformfactory" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h3>Services</h3>
+        <ul class="footer-links">
+          <li><a href="/services">All Services</a></li>
+          <li><a href="/order">Place Order</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Company</h3>
+        <ul class="footer-links">
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/blog">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Legal</h3>
+        <ul class="footer-links">
+          <li><a href="/terms">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/refunds">Refund Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 ShortFormFactory. All rights reserved.</p>
+      <p>Email: <a href="mailto:shortformfactory.help@gmail.com">shortformfactory.help@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+  <canvas id="particleCanvas"></canvas>
+  <script src="/main.js" defer></script>
+  
+  <script>
+    function calculateROI() {
+      const currentVideos = parseInt(document.getElementById('currentVideos').value) || 10;
+      const avgViews = parseInt(document.getElementById('avgViews').value) || 1000;
+      const conversionRate = parseFloat(document.getElementById('conversionRate').value) || 2;
+      const avgOrderValue = parseFloat(document.getElementById('avgOrderValue').value) || 100;
+      const package = document.getElementById('servicePackage').value;
+      
+      const packagePrices = {
+        basic: 25,
+        standard: 60,
+        premium: 140
+      };
+      
+      const pricePerVideo = packagePrices[package];
+      const monthlyInvestment = currentVideos * pricePerVideo;
+      
+      // Current revenue
+      const currentRevenue = currentVideos * avgViews * (conversionRate / 100) * avgOrderValue;
+      
+      // Projected improvements with professional editing
+      const viewIncrease = 2.5; // 2.5x increase in views
+      const conversionIncrease = 1.8; // 1.8x increase in conversion rate
+      
+      const projectedRevenue = currentVideos * (avgViews * viewIncrease) * ((conversionRate * conversionIncrease) / 100) * avgOrderValue;
+      
+      const netProfit = projectedRevenue - monthlyInvestment;
+      const roi = ((netProfit - monthlyInvestment) / monthlyInvestment) * 100;
+      
+      // Display results
+      document.getElementById('currentRevenue').textContent = `$${currentRevenue.toLocaleString()}`;
+      document.getElementById('projectedRevenue').textContent = `$${projectedRevenue.toLocaleString()}`;
+      document.getElementById('monthlyInvestment').textContent = `$${monthlyInvestment.toLocaleString()}`;
+      document.getElementById('netProfit').textContent = `$${netProfit.toLocaleString()}`;
+      document.getElementById('roiPercentage').textContent = `${roi.toFixed(1)}%`;
+      
+      document.getElementById('roiResults').classList.add('show');
+    }
+    
+    function startDemo() {
+      alert('Demo functionality coming soon! For now, try our ROI calculator to see your potential returns.');
+    }
+    
+    function resetDemo() {
+      document.getElementById('roiResults').classList.remove('show');
+      document.getElementById('currentVideos').value = '10';
+      document.getElementById('avgViews').value = '1000';
+      document.getElementById('conversionRate').value = '2';
+      document.getElementById('avgOrderValue').value = '100';
+      document.getElementById('servicePackage').value = 'basic';
+    }
+  </script>
+</body>
+</html>

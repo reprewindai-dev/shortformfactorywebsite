@@ -78,7 +78,9 @@
         <span></span>
       </button>
       <nav class="nav" id="mainNav">
+        <a href="/" class="nav-link">Home</a>
         <a href="/services" class="nav-link">Services</a>
+        <a href="/demo" class="nav-link">Demo</a>
         <a href="/blog" class="nav-link">Blog</a>
         <a href="/order" class="nav-link">Order</a>
         <a href="/contact" class="nav-link">Contact</a>
@@ -130,6 +132,84 @@
     </div>
   </section>
 
+  <section class="demo-preview" style="max-width: 1200px; margin: 4rem auto; padding: 0 2rem;">
+    <div class="section-header">
+      <h2 class="section-title">See Your Potential ROI</h2>
+      <p class="section-subtitle">Calculate your returns and try our viral captions demo</p>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+      <div style="background: var(--panel); border: 1px solid #333; border-radius: 16px; padding: 2rem;">
+        <h3 style="margin-bottom: 1rem;">Quick ROI Calculator</h3>
+        <p style="color: var(--muted); margin-bottom: 1.5rem;">See how much you could earn with professional video editing</p>
+        
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; color: var(--muted); font-weight: 700; margin-bottom: 6px;">Monthly Videos</label>
+          <input type="number" id="quickVideos" style="width: 100%; background: #080808; border: 1px solid #1b1b1b; color: #fff; border-radius: 12px; padding: 12px 14px;" placeholder="10" value="10">
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; color: var(--muted); font-weight: 700; margin-bottom: 6px;">Avg Views/Video</label>
+          <input type="number" id="quickViews" style="width: 100%; background: #080808; border: 1px solid #1b1b1b; color: #fff; border-radius: 12px; padding: 12px 14px;" placeholder="1000" value="1000">
+        </div>
+        
+        <button onclick="quickROI()" style="background: var(--neon); color: #000; border: none; border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 1rem;">Calculate ROI</button>
+        
+        <div id="quickResults" style="display: none; background: linear-gradient(135deg, rgba(198, 255, 64, 0.1), rgba(178, 255, 0, 0.05)); border: 1px solid rgba(198, 255, 64, 0.3); border-radius: 12px; padding: 1rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span>Projected Monthly Revenue:</span>
+            <span id="quickRevenue" style="color: var(--neon); font-weight: 700;">$0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>ROI:</span>
+            <span id="quickROI" style="color: var(--neon); font-weight: 700;">0%</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background: var(--panel); border: 1px solid #333; border-radius: 16px; padding: 2rem;">
+        <h3 style="margin-bottom: 1rem;">Try Viral Captions</h3>
+        <p style="color: var(--muted); margin-bottom: 1.5rem;">Our highest retention service - 3x longer watch time</p>
+        
+        <div style="background: linear-gradient(135deg, rgba(198, 255, 64, 0.1), rgba(178, 255, 0, 0.05)); border: 1px solid rgba(198, 255, 64, 0.2); border-radius: 12px; padding: 2rem; text-align: center; margin-bottom: 1.5rem;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+          <h4 style="margin-bottom: 0.5rem;">Animated Word-by-Word Captions</h4>
+          <p style="color: var(--muted); font-size: 0.9rem;">Keep viewers watching 3x longer</p>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="margin-bottom: 1rem;">Key Benefits:</h4>
+          <ul style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 0.5rem;">✅ 85% of videos watched without sound</li>
+            <li style="margin-bottom: 0.5rem;">✅ Custom fonts & brand colors</li>
+            <li style="margin-bottom: 0.5rem;">✅ Strategic emoji integration</li>
+            <li>✅ 12-24 hour delivery</li>
+          </ul>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.5rem; text-align: center;">
+          <div style="background: #0b0b0b; border: 1px solid #1b1b1b; border-radius: 8px; padding: 0.5rem;">
+            <div style="color: var(--neon); font-weight: 700;">Basic</div>
+            <div style="font-size: 0.9rem;">$20</div>
+          </div>
+          <div style="background: #0b0b0b; border: 1px solid #1b1b1b; border-radius: 8px; padding: 0.5rem;">
+            <div style="color: var(--neon); font-weight: 700;">Standard</div>
+            <div style="font-size: 0.9rem;">$50</div>
+          </div>
+          <div style="background: #0b0b0b; border: 1px solid #1b1b1b; border-radius: 8px; padding: 0.5rem;">
+            <div style="color: var(--neon); font-weight: 700;">Premium</div>
+            <div style="font-size: 0.9rem;">$110</div>
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <a href="/demo" class="btn btn-secondary" style="text-align: center;">Full Demo</a>
+          <a href="/order?service=viralCaptions" class="btn btn-primary" style="text-align: center;">Try Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-section footer-brand">
@@ -174,6 +254,7 @@
         <ul class="footer-links">
           <li><a href="/about">About</a></li>
           <li><a href="/contact">Contact</a></li>
+          <li><a href="/demo">Demo</a></li>
           <li><a href="/blog">Blog</a></li>
         </ul>
       </div>
@@ -198,6 +279,27 @@
   <script src="/main.js" defer></script>
   <link rel="stylesheet" href="/concierge-widget.css">
   <script src="/concierge-widget.js" defer></script>
+  
+  <script>
+    function quickROI() {
+      const videos = parseInt(document.getElementById('quickVideos').value) || 10;
+      const views = parseInt(document.getElementById('quickViews').value) || 1000;
+      
+      // Professional editing typically increases views by 2.5x and conversions by 1.8x
+      const projectedViews = videos * views * 2.5;
+      const avgConversion = 2; // 2% average conversion rate
+      const avgOrderValue = 100; // $100 average order value
+      const projectedRevenue = projectedViews * (avgConversion / 100) * avgOrderValue;
+      
+      // Standard package pricing
+      const investment = videos * 60;
+      const roi = ((projectedRevenue - investment) / investment) * 100;
+      
+      document.getElementById('quickRevenue').textContent = `$${projectedRevenue.toLocaleString()}`;
+      document.getElementById('quickROI').textContent = `${roi.toFixed(1)}%`;
+      document.getElementById('quickResults').style.display = 'block';
+    }
+  </script>
 </body>
 </html>
 
