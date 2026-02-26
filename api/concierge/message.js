@@ -1,4 +1,4 @@
-// Enhanced Concierge AI Message Handler with Hugging Face Integration
+// Lean Governed Funnel - Production-Safe AI with Rule-Based Fallback
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -7,90 +7,171 @@ export default async function handler(req, res) {
   try {
     const { sessionId, conversationState, currentQuestion, userAnswers, questions, message } = req.body;
 
-    // Try AI first, fallback to rule-based
-    let response;
-    try {
-      response = await runGovernedExecution(message, {
-        sessionId,
-        conversationState,
-        currentQuestion,
-        userAnswers,
-        questions
-      });
-    } catch (aiError) {
-      console.warn('AI failed, using fallback:', aiError.message);
-      response = await ruleBasedQualification(message, {
-        sessionId,
-        conversationState,
-        currentQuestion,
-        userAnswers,
-        questions
-      });
-    }
+    // P0: Single entrypoint for all AI
+    const response = await runGovernedExecution(message, {
+      sessionId,
+      conversationState,
+      currentQuestion,
+      userAnswers,
+      questions
+    });
 
-    // Log the interaction
-    await logInteraction(sessionId, message, response);
+    // P0: Observability logging
+    logInteraction(sessionId, message, response);
 
     res.status(200).json(response);
 
   } catch (error) {
-    console.error('Concierge message error:', error);
+    console.error('Governed execution failed:', error);
     
-    // Ultimate fallback
+    // Ultimate fallback - always works
     res.status(200).json({
       type: 'question',
-      message: "I'm here to help you get more clients from short-form video. What's your main goal right now - generating leads, sales, or brand awareness?",
+      message: "I'm here to help you get more clients from short-form video. What's your main goal right now?",
       lead_score: 25,
       intent_tier: "cold",
-      recommended_next_step: null,
-      recommended_package: null,
+      recommended_package: "starter",
+      recommended_next_step: "lead_magnet",
+      model_used: 'fallback',
+      latency_ms: 0,
       fallback_used: true
     });
   }
 }
 
+// P0: Single entrypoint for all AI execution
 async function runGovernedExecution(message, context) {
   const startTime = Date.now();
+  const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+  
+  // P0: Rate limiting + spam protection
+  if (await isRateLimited(context.sessionId)) {
+    return {
+      type: 'question',
+      message: "I'm processing your request. Give me a moment to think about your response.",
+      lead_score: calculateLeadScore(context.userAnswers),
+      intent_tier: 'warm',
+      recommended_package: 'starter',
+      recommended_next_step: 'lead_magnet',
+      model_used: 'rate_limited',
+      latency_ms: Date.now() - startTime,
+      fallback_used: true
+    };
+  }
+
+  // P0: Hard block for disallowed content
+  if (containsDisallowedContent(message)) {
+    return {
+      type: 'question',
+      message: "I'm here to help with short-form video content strategy. What are your business goals?",
+      lead_score: calculateLeadScore(context.userAnswers),
+      intent_tier: 'cold',
+      recommended_package: 'starter',
+      recommended_next_step: 'lead_magnet',
+      model_used: 'content_filtered',
+      latency_ms: Date.now() - startTime,
+      fallback_used: true
+    };
+  }
+
+  // P0: Cost guardrails - max turns check
+  if (context.currentQuestion >= 8) {
+    return generateFinalRecommendation(context.userAnswers);
+  }
+
+  let response;
   let modelUsed = 'rule-based';
   let fallbackUsed = false;
-  
+
   try {
-    // Try Hugging Face if token is available
-    if (process.env.HUGGINGFACE_API_KEY) {
+    // Try AI if available and within budget
+    if (process.env.HUGGINGFACE_API_KEY && !await exceedsSessionBudget(context.sessionId)) {
       modelUsed = 'huggingface';
-      const aiResponse = await callHuggingFace(message, context);
+      const aiResponse = await callAISafely(message, context);
       
-      // Validate response schema
-      const validated = validateResponseSchema(aiResponse);
-      if (!validated.valid) {
-        throw new Error('Invalid response schema from AI');
+      // P0: Strict JSON schema validation with retry
+      const validated = validateAndRetry(aiResponse, context);
+      if (validated.valid) {
+        response = validated.data;
+      } else {
+        throw new Error('AI validation failed after retry');
       }
-      
-      return {
-        ...validated.data,
-        model_used: modelUsed,
-        latency_ms: Date.now() - startTime,
-        fallback_used: false
-      };
     }
   } catch (error) {
-    console.warn('AI call failed:', error.message);
+    // P0: Fallback to deterministic rule-based
+    console.warn(`AI failed for ${executionId}, using fallback:`, error.message);
+    modelUsed = 'rule-based';
     fallbackUsed = true;
+    response = await ruleBasedQualification(message, context);
   }
-  
-  // Fallback to rule-based
-  const ruleResponse = await ruleBasedQualification(message, context);
-  
+
+  // P0: Ensure response meets minimum requirements
+  response = sanitizeResponse(response);
+
   return {
-    ...ruleResponse,
+    ...response,
     model_used: modelUsed,
     latency_ms: Date.now() - startTime,
-    fallback_used: fallbackUsed
+    fallback_used: fallbackUsed,
+    execution_id: executionId
   };
 }
 
-async function callHuggingFace(message, context) {
-  const prompt = buildPrompt(message, context);
+// P0: Rate limiting + spam protection
+async function isRateLimited(sessionId) {
+  // Simple in-memory rate limiting (production: use Redis)
+  const rateLimitMap = global._rateLimitMap || new Map();
+  global._rateLimitMap = rateLimitMap;
+  
+  const now = Date.now();
+  const userRequests = rateLimitMap.get(sessionId) || [];
+  const recentRequests = userRequests.filter(time => now - time < 60000); // 1 minute window
+  
+  if (recentRequests.length > 10) { // Max 10 requests per minute
+    return true;
+  }
+  
+  recentRequests.push(now);
+  rateLimitMap.set(sessionId, recentRequests);
+  return false;
+}
+
+// P0: Hard block for disallowed content + prompt injection
+function containsDisallowedContent(message) {
+  const disallowedPatterns = [
+    /ignore\s+(previous|all)\s+instructions/i,
+    /system\s*:/i,
+    /admin\s*panel/i,
+    /debug\s*mode/i,
+    /execute\s*code/i,
+    /sql\s*injection/i,
+    /javascript\s*:/i,
+    /<script/i,
+    /http[s]?:\/\/\s*$/i,
+    /\bpassword\b/i,
+    /\bsecret\b/i,
+    /\btoken\b/i,
+    /\bkey\b.*\bapi\b/i
+  ];
+
+  return disallowedPatterns.some(pattern => pattern.test(message));
+}
+
+// P0: Cost guardrails - per-session budget
+async function exceedsSessionBudget(sessionId) {
+  // Simple budget tracking (production: use database)
+  const budgetMap = global._budgetMap || new Map();
+  global._budgetMap = budgetMap;
+  
+  const sessionCost = budgetMap.get(sessionId) || 0;
+  const maxSessionCost = 0.10; // $0.10 per session max
+  
+  return sessionCost > maxSessionCost;
+}
+
+// P0: Safe AI call with cost tracking
+async function callAISafely(message, context) {
+  const prompt = buildSafePrompt(message, context);
   
   const response = await fetch('https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium', {
     method: 'POST',
@@ -101,123 +182,131 @@ async function callHuggingFace(message, context) {
     body: JSON.stringify({
       inputs: prompt,
       parameters: {
-        max_length: 150,
+        max_length: 100, // P0: Cost control - limit tokens
         temperature: 0.7,
-        return_full_text: false
+        return_full_text: false,
+        max_new_tokens: 50 // P0: Strict token limit
       }
     })
   });
 
   if (!response.ok) {
-    throw new Error('Hugging Face API error');
+    throw new Error(`AI API error: ${response.status}`);
   }
 
   const data = await response.json();
   const aiText = data[0]?.generated_text || '';
   
-  // Convert AI response to structured format
+  // Track cost (simple estimation)
+  const budgetMap = global._budgetMap || new Map();
+  global._budgetMap = budgetMap;
+  const currentCost = budgetMap.get(context.sessionId) || 0;
+  budgetMap.set(context.sessionId, currentCost + 0.001); // ~$0.001 per call
+  
   return parseAIResponse(aiText, context);
 }
 
-function buildPrompt(message, context) {
+// P0: Safe prompt construction
+function buildSafePrompt(message, context) {
   const { conversationState, currentQuestion, userAnswers, questions } = context;
   
-  let prompt = `You are a professional business development assistant for ShortFormFactory, a short-form video editing service. Your goal is to qualify leads and recommend the best next step.
+  return `You are a business development assistant for ShortFormFactory. Help with short-form video content strategy.
 
-Current conversation state: ${conversationState}
-Current question index: ${currentQuestion}
-User answers so far: ${JSON.stringify(userAnswers, null, 2)}
+Current context: ${conversationState}
+Question: ${currentQuestion}
+User said: "${message}"
 
-Available questions:
-${questions.map((q, i) => `${i}. ${q.text}`).join('\n')}
-
-User just said: "${message}"
-
-Respond with a JSON object containing:
+Respond with JSON only:
 {
-  "type": "question" | "recommendation" | "objection",
-  "message": "your response text",
-  "quickActions": ["optional", "button", "texts"],
+  "type": "question|recommendation|objection",
+  "message": "brief response",
   "lead_score": 0-100,
-  "intent_tier": "hot" | "warm" | "cold",
-  "recommended_package": "starter" | "growth" | "scale",
-  "recommended_next_step": "book_call" | "request_quote" | "lead_magnet"
+  "intent_tier": "hot|warm|cold",
+  "recommended_package": "starter|growth|scale",
+  "recommended_next_step": "book_call|request_quote|lead_magnet"
+}`;
 }
 
-Be conversational but professional. Focus on qualifying the lead and moving them to the appropriate next step.`;
-
-  return prompt;
-}
-
-function parseAIResponse(aiText, context) {
-  // Try to extract JSON from AI response
-  const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
+// P0: Strict JSON schema validation with retry
+function validateAndRetry(aiResponse, context) {
+  const maxRetries = 1; // P0: Single retry only
+  let attempts = 0;
+  
+  while (attempts <= maxRetries) {
     try {
-      const parsed = JSON.parse(jsonMatch[0]);
-      return validateAndEnhanceResponse(parsed, context);
-    } catch (e) {
-      // Fall through to rule-based
+      const parsed = typeof aiResponse === 'string' ? JSON.parse(aiResponse) : aiResponse;
+      const validated = validateResponseSchema(parsed);
+      
+      if (validated.valid) {
+        return { valid: true, data: sanitizeResponse(validated.data) };
+      }
+      
+      if (attempts === maxRetries) {
+        throw new Error(`Validation failed: ${validated.error}`);
+      }
+      
+      // Retry with corrective prompt
+      const correctivePrompt = `Fix this JSON to match schema: ${JSON.stringify(parsed)}`;
+      aiResponse = callAISafely(correctivePrompt, context);
+      attempts++;
+    } catch (error) {
+      if (attempts === maxRetries) {
+        throw new Error(`JSON parsing failed: ${error.message}`);
+      }
+      attempts++;
     }
   }
   
-  // If no valid JSON, create structured response from text
-  return {
-    type: 'question',
-    message: aiText || "I'm here to help you get more clients from short-form content.",
-    lead_score: 25,
-    intent_tier: 'cold',
-    recommended_package: 'starter',
-    recommended_next_step: 'lead_magnet'
-  };
+  return { valid: false, error: 'Max retries exceeded' };
 }
 
+// P0: Schema validation
 function validateResponseSchema(response) {
   const required = ['type', 'message', 'lead_score', 'intent_tier', 'recommended_package', 'recommended_next_step'];
   const missing = required.filter(field => !(field in response));
   
   if (missing.length > 0) {
-    return { valid: false, error: `Missing required fields: ${missing.join(', ')}` };
+    return { valid: false, error: `Missing: ${missing.join(', ')}` };
   }
   
   const validTypes = ['question', 'recommendation', 'objection'];
+  const validTiers = ['hot', 'warm', 'cold'];
+  const validPackages = ['starter', 'growth', 'scale'];
+  const validSteps = ['book_call', 'request_quote', 'lead_magnet'];
+  
   if (!validTypes.includes(response.type)) {
     return { valid: false, error: `Invalid type: ${response.type}` };
   }
   
-  const validTiers = ['hot', 'warm', 'cold'];
   if (!validTiers.includes(response.intent_tier)) {
-    return { valid: false, error: `Invalid intent_tier: ${response.intent_tier}` };
+    return { valid: false, error: `Invalid tier: ${response.intent_tier}` };
   }
   
-  const validPackages = ['starter', 'growth', 'scale'];
   if (!validPackages.includes(response.recommended_package)) {
-    return { valid: false, error: `Invalid recommended_package: ${response.recommended_package}` };
+    return { valid: false, error: `Invalid package: ${response.recommended_package}` };
   }
   
-  const validSteps = ['book_call', 'request_quote', 'lead_magnet'];
   if (!validSteps.includes(response.recommended_next_step)) {
-    return { valid: false, error: `Invalid recommended_next_step: ${response.recommended_next_step}` };
+    return { valid: false, error: `Invalid step: ${response.recommended_next_step}` };
   }
   
   return { valid: true, data: response };
 }
 
-function validateAndEnhanceResponse(response, context) {
-  // Ensure all required fields exist
-  const enhanced = {
+// P0: Response sanitization
+function sanitizeResponse(response) {
+  return {
     type: response.type || 'question',
-    message: response.message || "I'm here to help you.",
-    quickActions: response.quickActions || [],
-    lead_score: Math.min(100, Math.max(0, response.lead_score || 25)),
+    message: String(response.message || '').substring(0, 500), // P0: Limit message length
+    lead_score: Math.min(100, Math.max(0, parseInt(response.lead_score) || 25)),
     intent_tier: response.intent_tier || 'cold',
     recommended_package: response.recommended_package || 'starter',
-    recommended_next_step: response.recommended_next_step || 'lead_magnet'
+    recommended_next_step: response.recommended_next_step || 'lead_magnet',
+    quickActions: Array.isArray(response.quickActions) ? response.quickActions.slice(0, 4) : [] // P0: Limit options
   };
-  
-  return enhanced;
 }
 
+// P0: Deterministic rule-based qualification (always works)
 async function ruleBasedQualification(message, context) {
   const { conversationState, currentQuestion, userAnswers, questions } = context;
   const lowerMessage = message.toLowerCase();
@@ -227,78 +316,61 @@ async function ruleBasedQualification(message, context) {
     const question = questions[currentQuestion];
     
     if (question.type === 'buttons') {
-      // Check if user selected a valid option
       const option = question.options.find(opt => 
         lowerMessage.includes(opt.label.toLowerCase()) || 
         lowerMessage.includes(opt.value.toLowerCase())
       );
       
       if (option) {
-        // Move to next question
         const nextIndex = currentQuestion + 1;
-        
         if (nextIndex >= questions.length) {
-          // All questions answered - generate recommendation
-          return generateFinalRecommendation(userAnswers, message);
-        } else {
-          // Ask next question
-          const nextQuestion = questions[nextIndex];
-          return {
-            type: 'question',
-            message: nextQuestion.text,
-            quickActions: nextQuestion.type === 'buttons' ? nextQuestion.options.map(opt => opt.label) : [],
-            lead_score: calculateLeadScore(userAnswers),
-            intent_tier: 'warm',
-            recommended_package: 'starter',
-            recommended_next_step: 'lead_magnet'
-          };
+          return generateFinalRecommendation(userAnswers);
         }
+        
+        const nextQuestion = questions[nextIndex];
+        return {
+          type: 'question',
+          message: nextQuestion.text,
+          quickActions: nextQuestion.type === 'buttons' ? nextQuestion.options.map(opt => opt.label) : [],
+          lead_score: calculateLeadScore(userAnswers),
+          intent_tier: 'warm',
+          recommended_package: 'starter',
+          recommended_next_step: 'lead_magnet'
+        };
       }
     }
     
-    // For text questions, just move to next question
     const nextIndex = currentQuestion + 1;
     if (nextIndex >= questions.length) {
-      return generateFinalRecommendation(userAnswers, message);
-    } else {
-      const nextQuestion = questions[nextIndex];
-      return {
-        type: 'question',
-        message: nextQuestion.text,
-        quickActions: nextQuestion.type === 'buttons' ? nextQuestion.options.map(opt => opt.label) : [],
-        lead_score: calculateLeadScore(userAnswers),
-        intent_tier: 'warm',
-        recommended_package: 'starter',
-        recommended_next_step: 'lead_magnet'
-      };
+      return generateFinalRecommendation(userAnswers);
     }
+    
+    const nextQuestion = questions[nextIndex];
+    return {
+      type: 'question',
+      message: nextQuestion.text,
+      quickActions: nextQuestion.type === 'buttons' ? nextQuestion.options.map(opt => opt.label) : [],
+      lead_score: calculateLeadScore(userAnswers),
+      intent_tier: 'warm',
+      recommended_package: 'starter',
+      recommended_next_step: 'lead_magnet'
+    };
   }
   
-  // Handle objections and general conversation
+  // Objection handling
   const objections = {
-    'price': {
-      message: "I understand pricing is important. We have packages starting at $1,500/mo for 5 clips per week. Most clients see 3-5x ROI within 90 days. Would you like me to recommend the best package for your goals?",
-      quickActions: ['Yes, recommend package', 'Tell me more about pricing']
-    },
-    'expensive': {
-      message: "I understand pricing is important. We have packages starting at $1,500/mo for 5 clips per week. Most clients see 3-5x ROI within 90 days. Would you like me to recommend the best package for your goals?",
-      quickActions: ['Yes, recommend package', 'Tell me more about pricing']
-    },
-    'not sure': {
-      message: "Totally understand - this is an important decision. How about I send you our content plan template to review while you think it over? No pressure, just helpful resources.",
-      quickActions: ['Send template', 'I have questions']
-    },
-    'think': {
-      message: "Totally understand - this is an important decision. How about I send you our content plan template to review while you think it over? No pressure, just helpful resources.",
-      quickActions: ['Send template', 'I have questions']
-    }
+    'price': "I understand pricing is important. We have packages starting at $1,500/mo. Most clients see 3-5x ROI within 90 days. Would you like me to recommend the best package?",
+    'expensive': "I understand pricing is important. We have packages starting at $1,500/mo. Most clients see 3-5x ROI within 90 days. Would you like me to recommend the best package?",
+    'not sure': "Totally understand - this is important. How about I send you our content plan template to review while you think it over?",
+    'think': "Totally understand - this is important. How about I send you our content plan template to review while you think it over?"
   };
   
   for (const [trigger, response] of Object.entries(objections)) {
     if (lowerMessage.includes(trigger)) {
       return {
         type: 'objection',
-        ...response,
+        message: response,
+        quickActions: ['Yes, recommend package', 'Send template'],
         lead_score: calculateLeadScore(userAnswers),
         intent_tier: 'warm',
         recommended_package: 'starter',
@@ -318,33 +390,21 @@ async function ruleBasedQualification(message, context) {
   };
 }
 
-function generateFinalRecommendation(userAnswers, lastMessage) {
+function generateFinalRecommendation(userAnswers) {
   const leadScore = calculateLeadScore(userAnswers);
   const intentTier = getIntentTier(leadScore);
   const recommendedPackage = recommendPackage(userAnswers);
   const nextStep = getNextStep(intentTier);
   
   const messages = {
-    hot: {
-      book_call: "Perfect! Based on your answers, you're exactly who we help get results. I recommend our Growth package to start. Let's book a 15-minute call to finalize your content strategy.",
-      request_quote: "Great! You're a good fit for our services. I'll prepare a custom quote for you based on your needs.",
-      lead_magnet: "Thanks for sharing! Here's a free resource to help you get started."
-    },
-    warm: {
-      book_call: "You're on the right track! A quick call would help me give you the best recommendation.",
-      request_quote: "I can prepare a detailed proposal for your review. Let me gather a few more details.",
-      lead_magnet: "Here's some helpful information while you consider your options."
-    },
-    cold: {
-      book_call: "When you're ready to explore this seriously, we should definitely talk.",
-      request_quote: "I can send you some information to review when the time is right.",
-      lead_magnet: "Here's a free template to help you plan your content strategy."
-    }
+    hot: "Perfect! Based on your answers, you're exactly who we help get results. I recommend our Growth package. Let's book a 15-minute call to finalize your content strategy.",
+    warm: "You're on the right track! I can prepare a custom quote based on your needs with different package options.",
+    cold: "Here's a free resource to help you get started - our proven short-form content planning template."
   };
   
   return {
     type: 'recommendation',
-    message: messages[intentTier][nextStep],
+    message: messages[intentTier],
     lead_score: leadScore,
     intent_tier: intentTier,
     recommended_package: recommendedPackage,
@@ -355,28 +415,23 @@ function generateFinalRecommendation(userAnswers, lastMessage) {
 function calculateLeadScore(answers) {
   let score = 0;
   
-  // Revenue scoring
   if (answers.revenue === '100k+') score += 25;
   else if (answers.revenue === '25k-100k') score += 20;
   else if (answers.revenue === '5k-25k') score += 15;
   else score += 5;
   
-  // Budget scoring
   if (answers.marketing_budget === '5000+') score += 25;
   else if (answers.marketing_budget === '2000-5000') score += 20;
   else if (answers.marketing_budget === '500-2000') score += 15;
   else score += 5;
   
-  // Timeline scoring
   if (answers.timeline === 'asap') score += 20;
   else if (answers.timeline === '30days') score += 15;
   else score += 5;
   
-  // Decision maker scoring
   if (answers.decision_maker === 'yes') score += 15;
   else score += 5;
   
-  // Content needs scoring
   if (answers.content_needs && answers.content_needs.includes('10')) score += 15;
   else if (answers.content_needs && answers.content_needs.includes('5')) score += 10;
   else score += 5;
@@ -405,17 +460,43 @@ function getNextStep(tier) {
   return 'lead_magnet';
 }
 
-async function logInteraction(sessionId, message, response) {
-  try {
-    // Log to database or analytics service
-    console.log('Interaction logged:', {
-      sessionId,
-      message: message.substring(0, 100),
-      response_type: response.type,
-      lead_score: response.lead_score,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    // Fail silently
+function parseAIResponse(aiText, context) {
+  const jsonMatch = aiText.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    try {
+      return JSON.parse(jsonMatch[0]);
+    } catch (e) {
+      // Fall through
+    }
   }
+  
+  return {
+    type: 'question',
+    message: aiText || "I'm here to help you get more clients from short-form content.",
+    lead_score: 25,
+    intent_tier: 'cold',
+    recommended_package: 'starter',
+    recommended_next_step: 'lead_magnet'
+  };
+}
+
+// P0: Observability logging
+function logInteraction(sessionId, message, response) {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    session_id: sessionId,
+    message_length: message.length,
+    response_type: response.type,
+    lead_score: response.lead_score,
+    intent_tier: response.intent_tier,
+    model_used: response.model_used,
+    latency_ms: response.latency_ms,
+    fallback_used: response.fallback_used,
+    execution_id: response.execution_id
+  };
+  
+  console.log('GOVERNED_EXECUTION:', JSON.stringify(logEntry));
+  
+  // In production: send to analytics/logging service
+  // analytics.track('governed_execution', logEntry);
 }

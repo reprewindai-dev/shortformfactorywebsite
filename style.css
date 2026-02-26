@@ -398,6 +398,16 @@ a:hover{text-shadow:0 0 16px rgba(198,255,64,.6)}
 .total-label{font-weight:800}
 .total-value{font-size:1.4rem;font-weight:900;color:var(--neon)}
 
+.payment-method-group{margin-top:1.5rem}
+.payment-methods{display:flex;flex-direction:column;gap:0.75rem}
+.payment-method-option{display:flex;gap:0.75rem;align-items:flex-start;background:#0b0b0b;border:1px solid #1b1b1b;border-radius:12px;padding:0.85rem;cursor:pointer;transition:.2s border,.2s box-shadow,.2s transform}
+.payment-method-option:hover{border-color:var(--neon);box-shadow:0 0 18px rgba(198,255,64,.25)}
+.payment-method-option.active{border-color:var(--neon);box-shadow:0 0 22px rgba(198,255,64,.35);transform:translateY(-2px)}
+.payment-method-option input{margin-top:0.25rem}
+.payment-method-option strong{display:block;font-size:1rem;margin-bottom:2px}
+.payment-method-option span{color:var(--muted);font-size:.85rem}
+.payment-hint{margin-top:0.75rem;font-size:.85rem;color:var(--muted)}
+
 .payment-security{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
 .security-badge{display:flex;gap:8px;align-items:center;color:var(--muted)}
 

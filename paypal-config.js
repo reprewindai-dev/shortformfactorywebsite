@@ -33,7 +33,31 @@
   // Make PaymentState globally accessible
   window.PaymentState = PaymentState;
 
+  const ORDER_SNAPSHOT_KEY = 'sff_last_order';
+
+  function saveOrderSnapshot(payload) {
+    try {
+      const snapshot = {
+        ...payload,
+        timestamp: Date.now()
+      };
+      sessionStorage.setItem(ORDER_SNAPSHOT_KEY, JSON.stringify(snapshot));
+    } catch (err) {
+      console.warn('[Checkout] Unable to persist order snapshot:', err);
+    }
+  }
+
   function getOrderData() {
+    if (window.SFFOrder && window.SFFOrder.ready) {
+      return {
+        service: window.SFFOrder.service,
+        package: window.SFFOrder.package,
+        addons: window.SFFOrder.addons || [],
+        addonDetails: window.SFFOrder.addonDetails || [],
+        total: window.SFFOrder.total || 0
+      };
+    }
+
     const serviceSelect = document.getElementById("serviceSelect");
     const selectedPackageRadio = document.querySelector('input[name="sff-package"]:checked');
     const addonCheckboxes = document.querySelectorAll('.addon-checkbox input[type="checkbox"]:checked');
@@ -44,9 +68,32 @@
 
     const service = serviceSelect.value;
     const packageType = selectedPackageRadio.value;
-    const addons = Array.from(addonCheckboxes).map(cb => cb.value);
+    const selectedAddons = Array.from(addonCheckboxes);
+    const addons = selectedAddons.map(cb => cb.value);
+    const addonDetails = selectedAddons.map(cb => ({
+      id: cb.value,
+      name: cb.dataset.name || cb.value,
+      price: parseFloat(cb.dataset.price || '0')
+    }));
 
-    return { service, package: packageType, addons };
+    const addonSum = addonDetails.reduce((sum, item) => sum + (Number.isFinite(item.price) ? item.price : 0), 0);
+    return {
+      service,
+      package: packageType,
+      addons,
+      addonDetails,
+      total: window.SFFOrder?.total || addonSum
+    };
+  }
+
+  function snapshotOrder(provider, extra = {}) {
+    const orderState = getOrderData();
+    if (!orderState) return;
+    saveOrderSnapshot({
+      provider,
+      ...orderState,
+      ...extra
+    });
   }
 
   function showError(message, debugId = null) {
@@ -193,6 +240,8 @@
             PaymentState.setOrderID(data.orderID);
             sessionStorage.setItem("sff_order_id", data.orderID);
 
+            snapshotOrder('paypal', { orderID: data.orderID });
+
             window.location.href = TALLY_FORM_URL;
           } else {
             console.warn("[PayPal Client] Unexpected capture status:", captureData.status);
@@ -226,6 +275,79 @@
     const oldBtn = document.getElementById("payButton");
     if (oldBtn) oldBtn.style.display = "none";
   }
+
+  function setStripeButtonState(isLoading, label) {
+    const btn = document.getElementById('stripePayButton');
+    if (!btn) return;
+    btn.disabled = isLoading;
+    btn.textContent = isLoading ? (label || 'Processing...') : 'Pay with Card';
+  }
+
+  const StripeCheckout = {
+    stripe: null,
+    publishableKey: null,
+
+    async ensureClient() {
+      if (this.stripe) return this.stripe;
+      const res = await fetch('/api/stripe/config');
+      const data = await res.json();
+      if (!res.ok || !data.publishableKey) {
+        throw new Error(data.error || 'Stripe is not configured.');
+      }
+      this.publishableKey = data.publishableKey;
+      if (typeof Stripe === 'undefined') {
+        throw new Error('Stripe.js failed to load.');
+      }
+      this.stripe = Stripe(this.publishableKey);
+      return this.stripe;
+    },
+
+    async handleStripeCheckout() {
+      try {
+        const orderState = getOrderData();
+        if (!orderState || !orderState.service || !orderState.package) {
+          showError('Select a service and package before paying.');
+          return;
+        }
+        if (!orderState.total || orderState.total <= 0) {
+          showError('Your total must be greater than $0 to continue.');
+          return;
+        }
+
+        setStripeButtonState(true, 'Connecting to Stripe...');
+
+        const response = await fetch('/api/stripe/create-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            service: orderState.service,
+            package: orderState.package,
+            addons: orderState.addons || []
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.sessionId) {
+          throw new Error(data.error || 'Unable to start Stripe checkout.');
+        }
+
+        snapshotOrder('stripe', { sessionId: data.sessionId });
+
+        const stripe = await this.ensureClient();
+        const result = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+        if (result && result.error) {
+          throw new Error(result.error.message || 'Stripe checkout cancelled.');
+        }
+      } catch (error) {
+        console.error('[Stripe] Checkout error:', error);
+        showError(error.message || 'Stripe checkout failed. Please try again.');
+      } finally {
+        setStripeButtonState(false);
+      }
+    }
+  };
+
+  window.SFFCheckout = StripeCheckout;
 
   // Load PayPal SDK dynamically with client ID from config
   async function loadPayPalSDK() {

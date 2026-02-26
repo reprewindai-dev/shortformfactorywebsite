@@ -58,6 +58,7 @@
       
       <div id="orderSummary" class="order-summary" style="display:none">
         <h3>Order Summary</h3>
+        <p id="orderStatus" style="margin:0 0 12px;color:var(--muted);font-size:0.95rem;">Fetching your order details…</p>
         <div class="summary-row">
           <span class="summary-label">Service:</span>
           <span class="summary-value" id="summaryService">—</span>
@@ -66,9 +67,21 @@
           <span class="summary-label">Package:</span>
           <span class="summary-value" id="summaryPackage">—</span>
         </div>
+        <div class="summary-row">
+          <span class="summary-label">Add-ons:</span>
+          <span class="summary-value" id="summaryAddons">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Payment Method:</span>
+          <span class="summary-value" id="summaryProvider">—</span>
+        </div>
         <div class="summary-row" id="orderIDRow" style="display:none">
-          <span class="summary-label">Order ID:</span>
+          <span class="summary-label">Payment Reference:</span>
           <span class="summary-value" id="summaryOrderID">—</span>
+        </div>
+        <div class="summary-row" id="totalRow" style="display:none">
+          <span class="summary-label">Total Paid:</span>
+          <span class="summary-value" id="summaryTotal">—</span>
         </div>
       </div>
 
@@ -135,15 +148,149 @@
   <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
   <canvas id="particleCanvas"></canvas>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+  <script>
   (function(){
     window.scrollTo(0,0);
-    const params=new URLSearchParams(window.location.search);
-    const service=params.get("service");
-    const pkg=params.get("package");
-    const orderID=params.get("orderID");
-    if(service||pkg||orderID){
-      const summary=document.getElementById("orderSummary");
-      if(summary){
-        summary.style.display="block";
-        if(service)document.getElementById("summaryService"
+
+    const ORDER_SNAPSHOT_KEY = 'sff_last_order';
+    const SERVICE_LABELS = {
+      aiReel: 'AI Reel Edit',
+      socialEdit: 'Social Media Edit',
+      viralCaptions: 'Viral Captions',
+      podcastRepurpose: 'Podcast / YouTube Repurpose',
+      autoCaptions: 'Auto Captions',
+      smartCut: 'Video Trim / Smart Cut',
+      backgroundRemoval: 'Background Removal',
+      audioSync: 'Add Music / Audio Sync'
+    };
+    const PACKAGE_LABELS = { basic: 'Basic', standard: 'Standard', premium: 'Premium' };
+
+    const summaryCard = document.getElementById('orderSummary');
+    const statusEl = document.getElementById('orderStatus');
+    const serviceEl = document.getElementById('summaryService');
+    const packageEl = document.getElementById('summaryPackage');
+    const addonsEl = document.getElementById('summaryAddons');
+    const providerEl = document.getElementById('summaryProvider');
+    const orderIdEl = document.getElementById('summaryOrderID');
+    const orderIdRow = document.getElementById('orderIDRow');
+    const totalRow = document.getElementById('totalRow');
+    const totalEl = document.getElementById('summaryTotal');
+
+    function formatUSD(amount){
+      if(typeof amount !== 'number' || Number.isNaN(amount)) return '—';
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+    }
+
+    function formatAddons(addons){
+      if(!addons || !addons.length) return 'None';
+      return addons.map(addon => addon.name || addon.label || addon.id || addon).join(', ');
+    }
+
+    function parseSnapshot(){
+      try {
+        const raw = sessionStorage.getItem(ORDER_SNAPSHOT_KEY);
+        if(!raw) return null;
+        const parsed = JSON.parse(raw);
+        // Only trust snapshots from the last 24h
+        if(parsed?.timestamp && (Date.now() - parsed.timestamp) > 86_400_000){
+          return null;
+        }
+        return parsed;
+      } catch (err) {
+        console.warn('[Thank You] Failed to parse order snapshot', err);
+        return null;
+      }
+    }
+
+    async function fetchStripeSession(sessionId){
+      try {
+        const res = await fetch(`/api/stripe/session?id=${encodeURIComponent(sessionId)}`);
+        if(!res.ok) throw new Error('Session lookup failed');
+        return await res.json();
+      } catch (err) {
+        console.error('[Thank You] Stripe session lookup error', err);
+        return null;
+      }
+    }
+
+    function applySummary(data){
+      if(!summaryCard) return;
+      summaryCard.style.display = 'block';
+
+      const svcLabel = SERVICE_LABELS[data.service] || data.service || '—';
+      const pkgLabel = PACKAGE_LABELS[data.package] || data.package || '—';
+      serviceEl.textContent = svcLabel;
+      packageEl.textContent = pkgLabel;
+      addonsEl.textContent = formatAddons(data.addonDetails || data.addons);
+
+      if(data.provider){
+        providerEl.textContent = data.provider === 'stripe' ? 'Stripe (Card)' : 'PayPal';
+      } else {
+        providerEl.textContent = '—';
+      }
+
+      if(data.orderId){
+        orderIdEl.textContent = data.orderId;
+        orderIdRow.style.display = 'flex';
+      }
+
+      if(typeof data.total === 'number'){
+        totalEl.textContent = formatUSD(data.total);
+        totalRow.style.display = 'flex';
+      }
+
+      if(statusEl){
+        statusEl.textContent = data.provider ? `Payment confirmed via ${providerEl.textContent}.` : 'Payment confirmed.';
+      }
+    }
+
+    async function hydrate(){
+      const params = new URLSearchParams(window.location.search);
+      const providerParam = params.get('provider');
+      const sessionId = params.get('session_id') || params.get('sessionId');
+      const queryOrderId = params.get('orderID') || params.get('orderId');
+
+      const snapshot = parseSnapshot();
+      let summary = {
+        service: snapshot?.service || params.get('service') || null,
+        package: snapshot?.package || params.get('package') || null,
+        addonDetails: snapshot?.addonDetails || [],
+        addons: snapshot?.addons || [],
+        total: typeof snapshot?.total === 'number' ? snapshot.total : null,
+        provider: providerParam || snapshot?.provider || (sessionId ? 'stripe' : null),
+        orderId: queryOrderId || snapshot?.orderID || snapshot?.sessionId || null
+      };
+
+      if(summary.provider === 'stripe' && sessionId){
+        const session = await fetchStripeSession(sessionId);
+        if(session){
+          summary.orderId = session.id;
+          summary.total = typeof session.amount_total === 'number' ? session.amount_total / 100 : summary.total;
+          if(session.metadata){
+            summary.service = session.metadata.service || summary.service;
+            summary.package = session.metadata.package || summary.package;
+            if(session.metadata.addons){
+              const metadataAddons = session.metadata.addons.split(',').filter(Boolean).map(name => ({ name }));
+              summary.addonDetails = metadataAddons;
+            }
+          }
+        }
+      }
+
+      if(!summary.service && !summary.package && !summary.orderId){
+        if(statusEl){
+          statusEl.textContent = 'We could not find this order automatically. Please check your email for the receipt and reach out if you need help.';
+        }
+        if(summaryCard){
+          summaryCard.style.display = 'block';
+        }
+        return;
+      }
+
+      applySummary(summary);
+    }
+
+    hydrate();
+  })();
+  </script>

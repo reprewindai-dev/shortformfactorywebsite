@@ -2,6 +2,13 @@
   const $ = (sel, ctx=document)=>ctx.querySelector(sel);
   const $$ = (sel, ctx=document)=>Array.from(ctx.querySelectorAll(sel));
 
+  function emitOrderEvent(){
+    const detail = { ...(window.SFFOrder || {}) };
+    document.dispatchEvent(new CustomEvent('sff:order-updated', { detail }));
+  }
+
+  window.SFFOrder = window.SFFOrder || {};
+
   // Mobile menu
   const toggle = $('#mobileMenuToggle');
   const nav = $('#mainNav');
@@ -86,10 +93,14 @@
   const packageSection = $('#packageSection');
   const packageGrid = $('#packageGrid');
   const totalAmountEl = $('#totalAmount');
-  const payBtn = $('#payButton');
   const intakeBtn = $('#submitIntakeButton');
   const intakeNotice = $('#intakeNotice');
   const notesArea = $('#projectNotes');
+  const paymentMethodRadios = $$('input[name="paymentMethod"]');
+  const paymentMethodOptions = $$('.payment-method-option');
+  const stripePayButton = $('#stripePayButton');
+  const paymentHint = $('#paymentHint');
+  const paypalButtonContainer = $('#paypal-button-container');
 
   const summaryService = $('#summaryService');
   const summaryPackage = $('#summaryPackage');
@@ -111,6 +122,7 @@
 
   let selectedService = '';
   let selectedPackage = '';
+  let selectedPaymentMethod = 'paypal';
   let addons = new Map(); // id -> {name, price}
 
   // Preselect service from ?service=
@@ -150,19 +162,18 @@
     if(svc && selectedPackage){
       total += svc[selectedPackage] || 0;
     }
+
+    addons = new Map();
     const addonNames = [];
     $$('.addon-checkbox input').forEach(cb=>{
+      if(!cb.checked) return;
       const id = cb.value;
-      if(cb.checked){
-        const price = parseFloat(cb.dataset.price||'0');
-        const name = cb.dataset.name || id;
-        addons.set(id, {name, price});
-      }else{
-        addons.delete(id);
-      }
+      const price = parseFloat(cb.dataset.price||'0');
+      const name = cb.dataset.name || id;
+      addons.set(id, {name, price});
+      addonNames.push(`${name} (+$${price})`);
+      total += price;
     });
-    addons.forEach(a=> addonNames.push(`${a.name} (+$${a.price})`));
-    addons.forEach(a=> total += a.price);
 
     summaryService && (summaryService.textContent = svc ? svc.name : '—');
     if(svc && selectedPackage){
@@ -174,12 +185,50 @@
     summaryAddons && (summaryAddons.textContent = addonNames.length? addonNames.join('; ') : 'None');
     totalAmountEl && (totalAmountEl.textContent = formatUSD(total));
 
-    const ready = Boolean(svc && selectedPackage);
-    if(payBtn) payBtn.disabled = !ready || total<=0;
-    // intake lock/unlock is handled by paypal-config.js via sessionStorage
-    // don't override it here, just set initial disabled state
+    const ready = Boolean(svc && selectedPackage) && total > 0;
+
+    window.SFFOrder.ready = ready;
+    window.SFFOrder.total = total;
+    window.SFFOrder.service = selectedService;
+    window.SFFOrder.package = selectedPackage;
+    window.SFFOrder.addons = Array.from(addons.keys());
+    window.SFFOrder.addonDetails = Array.from(addons.values());
+
     if(intakeBtn && !sessionStorage.getItem('sff_payment_confirmed')){
       intakeBtn.disabled = true;
+    }
+
+    updatePaymentUI();
+    emitOrderEvent();
+  }
+
+  function updatePaymentUI(){
+    const ready = !!window.SFFOrder.ready;
+    if(paymentMethodOptions){
+      paymentMethodOptions.forEach(option=>{
+        const input = $('input', option);
+        if(!input) return;
+        option.classList.toggle('active', input.value === selectedPaymentMethod);
+      });
+    }
+
+    if(stripePayButton){
+      stripePayButton.style.display = selectedPaymentMethod === 'stripe' ? 'block' : 'none';
+      stripePayButton.disabled = !(ready && selectedPaymentMethod === 'stripe');
+    }
+
+    if(paypalButtonContainer){
+      paypalButtonContainer.style.display = selectedPaymentMethod === 'paypal' ? 'block' : 'none';
+    }
+
+    if(paymentHint){
+      if(!ready){
+        paymentHint.textContent = 'Select a service and package to enable checkout.';
+      } else if(selectedPaymentMethod === 'stripe') {
+        paymentHint.textContent = 'Click “Pay with Card” to finalize checkout via Stripe.';
+      } else {
+        paymentHint.textContent = 'Use the PayPal button below to complete checkout.';
+      }
     }
   }
 
@@ -202,6 +251,26 @@
   // Add-on changes recalc
   $$('.addon-checkbox input').forEach(cb=> cb.addEventListener('change', recalc));
 
+  paymentMethodRadios.forEach(radio => {
+    radio.addEventListener('change', ()=>{
+      if(radio.checked){
+        selectedPaymentMethod = radio.value;
+        window.SFFOrder.selectedPaymentMethod = selectedPaymentMethod;
+        updatePaymentUI();
+        emitOrderEvent();
+      }
+    });
+  });
+
+  if(stripePayButton){
+    stripePayButton.addEventListener('click', (event)=>{
+      event.preventDefault();
+      if(window.SFFCheckout && typeof window.SFFCheckout.handleStripeCheckout === 'function'){
+        window.SFFCheckout.handleStripeCheckout();
+      }
+    });
+  }
+
   // Pay button is handled by paypal-config.js (PayPal Buttons SDK)
 
   // Intake mailto - handled by paypal-config.js to include Order ID from sessionStorage
@@ -212,5 +281,6 @@
   }
 
   // Initial calc
+  window.SFFOrder.selectedPaymentMethod = selectedPaymentMethod;
   recalc();
 })();

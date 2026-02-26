@@ -194,9 +194,36 @@
                 <span class="total-value" id="totalAmount">$0</span>
               </div>
 
-              <button class="btn btn-primary btn-full" id="payButton" disabled>
-                Proceed to PayPal Payment
+              <div class="form-group payment-method-group">
+                <label class="form-label">
+                  <span class="label-icon">💳</span>
+                  Select Payment Method
+                </label>
+                <div class="payment-methods" id="paymentMethodGroup">
+                  <label class="payment-method-option">
+                    <input type="radio" name="paymentMethod" value="paypal" checked>
+                    <div>
+                      <strong>PayPal</strong>
+                      <span>Pay with PayPal balance, bank, or card</span>
+                    </div>
+                  </label>
+                  <label class="payment-method-option">
+                    <input type="radio" name="paymentMethod" value="stripe">
+                    <div>
+                      <strong>Card (Visa, MasterCard, Amex)</strong>
+                      <span>Processed securely via Stripe</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-full" id="stripePayButton" disabled>
+                Pay with Card
               </button>
+
+              <div class="payment-hint" id="paymentHint">
+                Select service, package, and payment method to continue.
+              </div>
 
               <!-- PayPal Button Container -->
               <div id="paypal-button-container" style="margin-top: 12px;"></div>
@@ -311,6 +338,8 @@
 
   <!-- PayPal JS SDK -->
   <script src="https://www.paypal.com/sdk/js?client-id=AQvpI56DNtpS9JJJmn2rZV6TPM6dm7PgOZDI5IunU0_i8HTm4upsA-4lrPsyd1welPr7tWA-App0UBXD&currency=USD"></script>
+  <!-- Stripe JS -->
+  <script src="https://js.stripe.com/v3/"></script>
 
   <script src="/main.js" defer></script>
   <script src="/paypal-config.js" defer></script>
