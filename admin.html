@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - ShortFormFactory</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .admin-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .admin-header {
+      background: var(--panel);
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .admin-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: var(--panel);
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--neon);
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    
+    .leads-table {
+      background: var(--panel);
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 2rem;
+      overflow-x: auto;
+    }
+    
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .filter-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.875rem;
+    }
+    
+    .filter-btn:hover {
+      background: var(--neon);
+      color: #000;
+    }
+    
+    .filter-btn.active {
+      background: var(--neon);
+      color: #000;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      text-align: left;
+      padding: 1rem;
+      border-bottom: 1px solid #333;
+    }
+    
+    th {
+      background: #1a1a1a;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .lead-score {
+      font-weight: 700;
+    }
+    
+    .lead-score.hot {
+      color: #ff4444;
+    }
+    
+    .lead-score.warm {
+      color: #ffaa00;
+    }
+    
+    .lead-score.cold {
+      color: #888;
+    }
+    
+    .intent-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+    
+    .intent-badge.hot {
+      background: rgba(255, 68, 68, 0.2);
+      color: #ff4444;
+    }
+    
+    .intent-badge.warm {
+      background: rgba(255, 170, 0, 0.2);
+      color: #ffaa00;
+    }
+    
+    .intent-badge.cold {
+      background: rgba(136, 136, 136, 0.2);
+      color: #888;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .action-btn {
+      background: var(--neon);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .action-btn:hover {
+      background: #b2ff00;
+    }
+    
+    .export-btn {
+      background: var(--neon);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .export-btn:hover {
+      background: #b2ff00;
+    }
+    
+    .login-form {
+      max-width: 400px;
+      margin: 4rem auto;
+      background: var(--panel);
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 2rem;
+    }
+    
+    .login-title {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .form-label {
+      display: block;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-input {
+      width: 100%;
+      background: #080808;
+      border: 1px solid #1b1b1b;
+      color: #fff;
+      border-radius: 12px;
+      padding: 0.75rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    
+    .form-input:focus {
+      border-color: var(--neon);
+    }
+    
+    .login-btn {
+      width: 100%;
+      background: var(--neon);
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      padding: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .login-btn:hover {
+      background: #b2ff00;
+    }
+    
+    .error-message {
+      color: #ff4444;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .admin-container {
+        padding: 1rem;
+      }
+      
+      .admin-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      
+      .admin-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .filter-buttons {
+        justify-content: center;
+      }
+      
+      .leads-table {
+        padding: 1rem;
+      }
+      
+      table {
+        font-size: 0.875rem;
+      }
+      
+      th, td {
+        padding: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body class="admin">
+  <div class="bg-grid"></div>
+  
+  <div id="app">
+    <!-- Login Form -->
+    <div id="loginForm" class="login-form">
+      <h2 class="login-title">Admin Login</h2>
+      <form id="loginFormElement">
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="password" class="form-input" placeholder="Enter admin password">
+        </div>
+        <button type="submit" class="login-btn">Login</button>
+        <div id="loginError" class="error-message" style="display: none;"></div>
+      </form>
+    </div>
+    
+    <!-- Admin Dashboard -->
+    <div id="dashboard" style="display: none;">
+      <div class="admin-container">
+        <header class="admin-header">
+          <h1 class="admin-title">Admin Dashboard</h1>
+          <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+        </header>
+        
+        <div class="admin-stats">
+          <div class="stat-card">
+            <div class="stat-value" id="totalLeads">0</div>
+            <div class="stat-label">Total Leads</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="hotLeads">0</div>
+            <div class="stat-label">Hot Leads</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="warmLeads">0</div>
+            <div class="stat-label">Warm Leads</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="coldLeads">0</div>
+            <div class="stat-label">Cold Leads</div>
+          </div>
+        </div>
+        
+        <div class="leads-table">
+          <div class="table-header">
+            <h2>Leads</h2>
+            <div class="filter-buttons">
+              <button class="filter-btn active" onclick="filterLeads('all')">All</button>
+              <button class="filter-btn" onclick="filterLeads('hot')">Hot</button>
+              <button class="filter-btn" onclick="filterLeads('warm')">Warm</button>
+              <button class="filter-btn" onclick="filterLeads('cold')">Cold</button>
+            </div>
+          </div>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Score</th>
+                <th>Intent</th>
+                <th>Package</th>
+                <th>Next Step</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="leadsTableBody">
+              <!-- Leads will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simple admin authentication (in production, use proper auth)
+    const ADMIN_PASSWORD = 'ShortFormAdmin2026!';
+    
+    // Mock data (in production, fetch from API)
+    let allLeads = [
+      {
+        id: 'lead_1',
+        created_at: '2026-02-26T10:30:00Z',
+        name: 'John Smith',
+        email: 'john@example.com',
+        lead_score: 85,
+        intent_tier: 'hot',
+        recommended_package: 'growth',
+        recommended_next_step: 'book_call',
+        answers_json: '{"revenue": "100k+", "marketing_budget": "5000+", "timeline": "asap"}'
+      },
+      {
+        id: 'lead_2',
+        created_at: '2026-02-26T09:15:00Z',
+        name: 'Sarah Johnson',
+        email: 'sarah@example.com',
+        lead_score: 45,
+        intent_tier: 'warm',
+        recommended_package: 'starter',
+        recommended_next_step: 'request_quote',
+        answers_json: '{"revenue": "25k-100k", "marketing_budget": "500-2000", "timeline": "30days"}'
+      },
+      {
+        id: 'lead_3',
+        created_at: '2026-02-26T08:45:00Z',
+        name: 'Mike Davis',
+        email: 'mike@example.com',
+        lead_score: 25,
+        intent_tier: 'cold',
+        recommended_package: 'starter',
+        recommended_next_step: 'lead_magnet',
+        answers_json: '{"revenue": "0-5k", "marketing_budget": "0-500", "timeline": "later"}'
+      }
+    ];
+    
+    let currentFilter = 'all';
+    
+    // Login functionality
+    document.getElementById('loginFormElement').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('loginError');
+      
+      if (password === ADMIN_PASSWORD) {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        loadDashboard();
+      } else {
+        errorDiv.textContent = 'Invalid password';
+        errorDiv.style.display = 'block';
+      }
+    });
+    
+    function loadDashboard() {
+      updateStats();
+      renderLeads();
+    }
+    
+    function updateStats() {
+      const total = allLeads.length;
+      const hot = allLeads.filter(lead => lead.intent_tier === 'hot').length;
+      const warm = allLeads.filter(lead => lead.intent_tier === 'warm').length;
+      const cold = allLeads.filter(lead => lead.intent_tier === 'cold').length;
+      
+      document.getElementById('totalLeads').textContent = total;
+      document.getElementById('hotLeads').textContent = hot;
+      document.getElementById('warmLeads').textContent = warm;
+      document.getElementById('coldLeads').textContent = cold;
+    }
+    
+    function filterLeads(tier) {
+      currentFilter = tier;
+      
+      // Update button states
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      renderLeads();
+    }
+    
+    function renderLeads() {
+      const tbody = document.getElementById('leadsTableBody');
+      const filteredLeads = currentFilter === 'all' 
+        ? allLeads 
+        : allLeads.filter(lead => lead.intent_tier === currentFilter);
+      
+      tbody.innerHTML = filteredLeads.map(lead => `
+        <tr>
+          <td>${new Date(lead.created_at).toLocaleDateString()}</td>
+          <td>${lead.name || 'N/A'}</td>
+          <td>${lead.email}</td>
+          <td><span class="lead-score ${lead.intent_tier}">${lead.lead_score}</span></td>
+          <td><span class="intent-badge ${lead.intent_tier}">${lead.intent_tier.toUpperCase()}</span></td>
+          <td>${lead.recommended_package || 'N/A'}</td>
+          <td>${lead.recommended_next_step || 'N/A'}</td>
+          <td>
+            <div class="actions">
+              <button class="action-btn" onclick="viewLead('${lead.id}')">View</button>
+              <button class="action-btn" onclick="emailLead('${lead.id}')">Email</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+    
+    function viewLead(leadId) {
+      const lead = allLeads.find(l => l.id === leadId);
+      if (lead) {
+        const answers = JSON.parse(lead.answers_json || '{}');
+        alert(`Lead Details:\n\nName: ${lead.name}\nEmail: ${lead.email}\nScore: ${lead.lead_score}\nIntent: ${lead.intent_tier}\n\nAnswers:\n${Object.entries(answers).map(([k, v]) => `${k}: ${v}`).join('\n')}`);
+      }
+    }
+    
+    function emailLead(leadId) {
+      const lead = allLeads.find(l => l.id === leadId);
+      if (lead) {
+        window.location.href = `mailto:${lead.email}`;
+      }
+    }
+    
+    function exportCSV() {
+      const headers = ['Date', 'Name', 'Email', 'Score', 'Intent', 'Package', 'Next Step'];
+      const rows = allLeads.map(lead => [
+        new Date(lead.created_at).toLocaleDateString(),
+        lead.name || '',
+        lead.email,
+        lead.lead_score,
+        lead.intent_tier,
+        lead.recommended_package || '',
+        lead.recommended_next_step || ''
+      ]);
+      
+      const csv = [headers, ...rows]
+        .map(row => row.map(cell => `"${cell}"`).join(','))
+        .join('\n');
+      
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `shortformfactory_leads_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+    
+    // In production, fetch real data from API
+    async function fetchLeads() {
+      try {
+        const response = await fetch('/api/leads/list');
+        if (response.ok) {
+          allLeads = await response.json();
+          loadDashboard();
+        }
+      } catch (error) {
+        console.error('Failed to fetch leads:', error);
+      }
+    }
+  </script>
+</body>
+</html>

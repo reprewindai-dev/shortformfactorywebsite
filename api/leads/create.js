@@ -1,4 +1,4 @@
-// Lead Creation API
+// Enhanced Lead Creation API with Email Notifications
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -9,44 +9,61 @@ export default async function handler(req, res) {
       email,
       name,
       phone,
-      next_step,
-      qualification_data,
-      session_id,
+      leadScore,
+      intentTier,
+      recommendedPackage,
+      recommendedNextStep,
+      userAnswers,
+      sessionId,
       source_url,
       utm_params,
-      conversation_history
+      user_agent,
+      timestamp
     } = req.body;
 
     if (!email) {
       return res.status(400).json({ error: 'Email is required' });
     }
 
-    // Create lead record (simplified for now - would normally save to database)
+    // Create lead record
     const leadData = {
+      id: 'lead_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
       email: email.toLowerCase(),
       name: name || '',
       phone: phone || '',
-      lead_score: qualification_data?.lead_score || 0,
-      intent_tier: qualification_data?.intent_tier || 'cold',
-      recommended_package: qualification_data?.recommended_package || null,
-      recommended_next_step: next_step || null,
+      lead_score: leadScore || 0,
+      intent_tier: intentTier || 'cold',
+      recommended_package: recommendedPackage || null,
+      recommended_next_step: recommendedNextStep || null,
+      answers_json: JSON.stringify(userAnswers || {}),
       source_url: source_url || '',
       utm_params: JSON.stringify(utm_params || {}),
-      answers_json: JSON.stringify(qualification_data || {}),
-      conversation_history: JSON.stringify(conversation_history || []),
-      session_id: session_id || '',
-      created_at: new Date().toISOString()
+      session_id: sessionId || '',
+      user_agent: user_agent || '',
+      created_at: timestamp || new Date().toISOString()
     };
 
-    // Log the lead (in production, save to database)
+    // Store lead (in production, save to database)
     console.log('Lead created:', leadData);
 
-    // Send notifications (simplified for now)
-    await sendNotifications(leadData, next_step);
+    // Send notifications based on intent tier
+    await sendNotifications(leadData);
+
+    // Store conversation
+    await storeConversation(sessionId, {
+      lead_id: leadData.id,
+      answers: userAnswers,
+      final_recommendation: {
+        lead_score: leadScore,
+        intent_tier: intentTier,
+        recommended_package: recommendedPackage,
+        recommended_next_step: recommendedNextStep
+      }
+    });
 
     res.status(200).json({
       success: true,
-      lead_id: 'lead_' + Date.now(),
+      lead_id: leadData.id,
       message: 'Lead created successfully'
     });
 
@@ -59,15 +76,167 @@ export default async function handler(req, res) {
   }
 }
 
-async function sendNotifications(leadData, nextStep) {
+async function sendNotifications(leadData) {
   try {
-    // Log notification (in production, send actual emails)
-    console.log('Notification sent for lead:', leadData.email, 'Next step:', nextStep);
+    const { intent_tier, email, name, recommended_package, lead_score } = leadData;
     
-    // In production, you would use Resend or similar service:
-    // await resend.emails.send({...});
+    // Send notification to business owner for hot leads
+    if (intent_tier === 'hot') {
+      await sendHotLeadNotification(leadData);
+    }
+    
+    // Send confirmation email to lead
+    await sendLeadConfirmation(leadData);
+    
+    console.log('Notifications sent for lead:', email, 'Intent tier:', intent_tier);
     
   } catch (error) {
     console.error('Failed to send notifications:', error);
+  }
+}
+
+async function sendHotLeadNotification(leadData) {
+  const { email, name, lead_score, recommended_package, answers_json } = leadData;
+  const answers = JSON.parse(answers_json || '{}');
+  
+  const subject = `🔥 New HOT Lead — ShortFormFactory (Score: ${lead_score})`;
+  
+  const body = `
+New hot lead captured!
+
+Contact Information:
+- Name: ${name || 'Not provided'}
+- Email: ${email}
+- Lead Score: ${lead_score}/100
+- Intent Tier: ${leadData.intent_tier}
+- Recommended Package: ${recommended_package || 'Not determined'}
+
+Qualification Answers:
+${Object.entries(answers).map(([key, value]) => `- ${key}: ${value}`).join('\n')}
+
+Next Steps:
+1. Contact within 2 hours
+2. Send personalized proposal
+3. Schedule strategy call
+
+Book a call: https://calendly.com/shortformfactory/strategy-call
+  `;
+
+  // In production, use Resend:
+  // await resend.emails.send({
+  //   from: 'concierge@shortformfactory.com',
+  //   to: 'shortformfactory.help@gmail.com',
+  //   subject: subject,
+  //   html: body.replace(/\n/g, '<br>')
+  // });
+  
+  console.log('HOT LEAD NOTIFICATION:', subject);
+  console.log(body);
+}
+
+async function sendLeadConfirmation(leadData) {
+  const { email, name, recommended_next_step, recommended_package } = leadData;
+  
+  let subject, body;
+  
+  switch (recommended_next_step) {
+    case 'book_call':
+      subject = 'Your Strategy Call - ShortFormFactory';
+      body = `
+Hi ${name || 'there'},
+
+Thanks for your interest in ShortFormFactory! Based on our conversation, I recommend scheduling a strategy call to discuss your content goals.
+
+Book your 15-minute strategy call here: https://calendly.com/shortformfactory/strategy-call
+
+During the call, we'll:
+- Review your current content strategy
+- Discuss your recommended ${recommended_package} package
+- Outline a plan to help you achieve your goals
+- Answer any questions you have
+
+Looking forward to speaking with you!
+
+Best regards,
+The ShortFormFactory Team
+      `;
+      break;
+      
+    case 'request_quote':
+      subject = 'Your Custom Quote - ShortFormFactory';
+      body = `
+Hi ${name || 'there'},
+
+Thank you for your interest in ShortFormFactory! I'm preparing a custom quote based on your specific needs and goals.
+
+You can expect to receive your detailed proposal within 24 hours, including:
+- Package recommendations
+- Pricing options
+- Deliverables and timeline
+- Next steps to get started
+
+If you have any questions in the meantime, feel free to reply to this email.
+
+Best regards,
+The ShortFormFactory Team
+      `;
+      break;
+      
+    case 'lead_magnet':
+      subject = 'Your Free Content Plan Template - ShortFormFactory';
+      body = `
+Hi ${name || 'there'},
+
+Here's your free short-form content planning template!
+
+📋 Download Template: https://shortformfactory.com/content-plan-template
+
+This template includes:
+- Our proven content planning framework
+- Examples of high-performing content structures
+- Tips for creating viral short-form content
+- A fill-in-the-blank template you can use immediately
+
+When you're ready to take your content to the next level, we're here to help!
+
+Best regards,
+The ShortFormFactory Team
+      `;
+      break;
+      
+    default:
+      subject = 'Thanks for connecting - ShortFormFactory';
+      body = `
+Hi ${name || 'there'},
+
+Thanks for your interest in ShortFormFactory! I'm here to help you create high-performing short-form content.
+
+Feel free to reply to this email with any questions, or schedule a call to discuss your goals:
+https://calendly.com/shortformfactory/strategy-call
+
+Best regards,
+The ShortFormFactory Team
+      `;
+  }
+  
+  // In production, use Resend:
+  // await resend.emails.send({
+  //   from: 'concierge@shortformfactory.com',
+  //   to: email,
+  //   subject: subject,
+  //   html: body.replace(/\n/g, '<br>')
+  // });
+  
+  console.log('LEAD CONFIRMATION EMAIL:', subject);
+  console.log('To:', email);
+  console.log(body);
+}
+
+async function storeConversation(sessionId, data) {
+  try {
+    // In production, save to database
+    console.log('Conversation stored:', sessionId, data);
+  } catch (error) {
+    console.error('Failed to store conversation:', error);
   }
 }

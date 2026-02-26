@@ -1,0 +1,409 @@
+/* Concierge Widget - Enhanced Version */
+.concierge-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.concierge-toggle {
+  width: 60px;
+  height: 60px;
+  background: var(--neon);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #000;
+  box-shadow: 0 4px 20px rgba(198, 255, 64, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.concierge-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(198, 255, 64, 0.6);
+}
+
+.concierge-toggle.pulse {
+  animation: widgetPulse 2s infinite;
+}
+
+.concierge-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.concierge-window {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  width: 380px;
+  height: 600px;
+  background: var(--panel);
+  border: 1px solid #333;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.9) translateY(20px);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.concierge-window.open {
+  display: flex;
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.concierge-header {
+  background: linear-gradient(135deg, var(--neon), #b2ff00);
+  color: #000;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.concierge-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.concierge-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #000;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.concierge-close:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.concierge-body {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.concierge-messages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  padding-right: 0.5rem;
+}
+
+.concierge-message {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  animation: messageSlide 0.3s ease;
+}
+
+.concierge-message.assistant {
+  align-items: flex-start;
+}
+
+.concierge-message.user {
+  align-items: flex-end;
+}
+
+.concierge-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  margin-bottom: 0.5rem;
+}
+
+.concierge-message.assistant .concierge-avatar {
+  background: var(--neon);
+  color: #000;
+  order: 0;
+}
+
+.concierge-message.user .concierge-avatar {
+  background: #333;
+  color: var(--text);
+  order: 1;
+}
+
+.concierge-bubble {
+  max-width: 80%;
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.concierge-message.assistant .concierge-bubble {
+  background: #1a1a1a;
+  color: var(--text);
+  border: 1px solid #333;
+  order: 0;
+  border-top-left-radius: 4px;
+}
+
+.concierge-message.user .concierge-bubble {
+  background: var(--neon);
+  color: #000;
+  order: 0;
+  border-top-right-radius: 4px;
+}
+
+.concierge-timestamp {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.concierge-message.assistant .concierge-timestamp {
+  order: 0;
+}
+
+.concierge-message.user .concierge-timestamp {
+  order: 1;
+}
+
+.concierge-input-area {
+  border-top: 1px solid #333;
+  padding-top: 1rem;
+}
+
+.concierge-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.concierge-input {
+  flex: 1;
+  background: #080808;
+  border: 1px solid #1b1b1b;
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.75rem;
+  font-size: 14px;
+  resize: none;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.concierge-input:focus {
+  border-color: var(--neon);
+}
+
+.concierge-send {
+  background: var(--neon);
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.concierge-send:hover:not(:disabled) {
+  background: #b2ff00;
+  transform: translateY(-1px);
+}
+
+.concierge-send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.concierge-typing {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 16px;
+  border-top-left-radius: 4px;
+  margin-bottom: 1rem;
+  width: fit-content;
+}
+
+.concierge-typing-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--neon);
+  border-radius: 50%;
+  animation: typingDot 1.4s infinite ease-in-out;
+}
+
+.concierge-typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.concierge-typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.concierge-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.concierge-quick-action {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: var(--text);
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.concierge-quick-action:hover {
+  background: var(--neon);
+  color: #000;
+  border-color: var(--neon);
+}
+
+.concierge-cta-card {
+  background: linear-gradient(135deg, rgba(198, 255, 64, 0.1), rgba(178, 255, 0, 0.05));
+  border: 1px solid rgba(198, 255, 64, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.concierge-cta-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--neon);
+  font-size: 1rem;
+}
+
+.concierge-cta-card p {
+  margin: 0 0 1rem 0;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.concierge-cta-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.concierge-cta-btn {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.concierge-cta-btn.primary {
+  background: var(--neon);
+  color: #000;
+}
+
+.concierge-cta-btn.primary:hover {
+  background: #b2ff00;
+}
+
+.concierge-cta-btn.secondary {
+  background: transparent;
+  color: var(--neon);
+  border: 1px solid var(--neon);
+}
+
+.concierge-cta-btn.secondary:hover {
+  background: var(--neon);
+  color: #000;
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+  .concierge-widget {
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  .concierge-toggle {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .concierge-window {
+    width: calc(100vw - 40px);
+    height: calc(100vh - 120px);
+    right: -10px;
+    bottom: 70px;
+  }
+  
+  .concierge-bubble {
+    max-width: 85%;
+  }
+}
+
+/* Animations */
+@keyframes widgetPulse {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(198, 255, 64, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 30px rgba(198, 255, 64, 0.8);
+  }
+}
+
+@keyframes messageSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typingDot {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
