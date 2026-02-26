@@ -385,6 +385,31 @@
   <script src="/concierge-widget-new.js" defer></script>
   
   <script>
+    // Debug concierge loading
+    window.addEventListener('load', () => {
+      console.log('Concierge widget should be loading...');
+      setTimeout(() => {
+        console.log('Concierge available:', !!window.concierge);
+        if (window.concierge) {
+          console.log('Concierge widget loaded successfully');
+          // Add manual trigger for testing
+          window.testConcierge = () => {
+            console.log('Testing concierge manually...');
+            if (window.concierge) {
+              window.concierge.open();
+            } else {
+              console.error('Concierge not available');
+            }
+          };
+          console.log('Test function available: window.testConcierge()');
+        } else {
+          console.error('Concierge widget failed to load');
+        }
+      }, 2000);
+    });
+  </script>
+  
+  <script>
     function quickROI() {
       const videos = parseInt(document.getElementById('quickVideos').value) || 10;
       const views = parseInt(document.getElementById('quickViews').value) || 1000;
