@@ -56,16 +56,16 @@
   <polygon points="297,122 297,128 303,125" fill="#00ff88"/>
   
   <!-- Platform indicators -->
-  <text x="230" y="165" font-family="Arial, sans-serif" font-size="8" fill="#00ff88" text-anchor="middle">TT</text>
-  <text x="300" y="165" font-family="Arial, sans-serif" font-size="8" fill="#00ff88" text-anchor="middle">IG</text>
-  <text x="230" y="220" font-family="Arial, sans-serif" font-size="8" fill="#00ff88" text-anchor="middle">YT</text>
-  <text x="300" y="220" font-family="Arial, sans-serif" font-size="8" fill="#00ff88" text-anchor="middle">FB</text>
+  <text x="230" y="165" font-family="Arial" font-size="8" fill="#00ff88" text-anchor="middle">TT</text>
+  <text x="300" y="165" font-family="Arial" font-size="8" fill="#00ff88" text-anchor="middle">IG</text>
+  <text x="230" y="220" font-family="Arial" font-size="8" fill="#00ff88" text-anchor="middle">YT</text>
+  <text x="300" y="220" font-family="Arial" font-size="8" fill="#00ff88" text-anchor="middle">FB</text>
   
   <!-- Magic wand icon -->
   <circle cx="160" cy="140" r="10" fill="#667eea" opacity="0.2"/>
-  <text x="160" y="145" font-family="Arial, sans-serif" font-size="14" fill="#667eea" text-anchor="middle">✨</text>
+  <text x="160" y="145" font-family="Arial" font-size="14" fill="#667eea" text-anchor="middle">✨</text>
   
   <!-- Service title -->
-  <text x="200" y="250" font-family="Space Grotesk, sans-serif" font-size="24" font-weight="600" fill="white" text-anchor="middle">Podcast & YouTube Repurpose</text>
-  <text x="200" y="275" font-family="Space Grotesk, sans-serif" font-size="14" fill="white" opacity="0.8" text-anchor="middle">Long-Form to Viral Short-Form</text>
+  <text x="200" y="250" font-family="Arial" font-size="24" font-weight="600" fill="white" text-anchor="middle">Podcast and YouTube Repurpose</text>
+  <text x="200" y="275" font-family="Arial" font-size="14" fill="white" opacity="0.8" text-anchor="middle">Long-Form to Viral Short-Form</text>
 </svg>
