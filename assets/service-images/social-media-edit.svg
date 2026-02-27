@@ -47,6 +47,6 @@
   <text x="310" y="145" font-family="Arial, sans-serif" font-size="12" fill="#00ff88" text-anchor="middle">Combined</text>
   
   <!-- Service title -->
-  <text x="200" y="250" font-family="Space Grotesk, sans-serif" font-size="24" font-weight="600" fill="white" text-anchor="middle">Social Media Edit</text>
-  <text x="200" y="275" font-family="Space Grotesk, sans-serif" font-size="14" fill="white" opacity="0.8" text-anchor="middle">Multi-Platform Content Creation</text>
+  <text x="200" y="250" font-family="Arial,sans-serif" font-size="24" font-weight="600" fill="white" text-anchor="middle">Social Media Edit</text>
+  <text x="200" y="275" font-family="Arial,sans-serif" font-size="14" fill="white" opacity="0.8" text-anchor="middle">Multi-Platform Content Creation</text>
 </svg>

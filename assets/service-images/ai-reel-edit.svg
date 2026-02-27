@@ -39,6 +39,6 @@
   <text x="340" y="65" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#00ff88" text-anchor="middle">AI</text>
   
   <!-- Service title -->
-  <text x="200" y="250" font-family="Space Grotesk, sans-serif" font-size="24" font-weight="600" fill="white" text-anchor="middle">AI Reel Edit</text>
-  <text x="200" y="275" font-family="Space Grotesk, sans-serif" font-size="14" fill="white" opacity="0.8" text-anchor="middle">Smart Scene Detection & Viral Transitions</text>
+  <text x="200" y="250" font-family="Arial,sans-serif" font-size="24" font-weight="600" fill="white" text-anchor="middle">AI Reel Edit</text>
+  <text x="200" y="275" font-family="Arial,sans-serif" font-size="14" fill="white" opacity="0.8" text-anchor="middle">Smart Scene Detection & Viral Transitions</text>
 </svg>
