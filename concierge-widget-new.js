@@ -1,4 +1,7 @@
 // Enhanced Concierge Widget - Production Version
+(function() {
+  'use strict';
+  
 class ConciergeWidget {
   constructor() {
     this.isOpen = false;
@@ -680,3 +683,5 @@ class ConciergeWidget {
 document.addEventListener('DOMContentLoaded', () => {
   window.concierge = new ConciergeWidget();
 });
+
+})();
