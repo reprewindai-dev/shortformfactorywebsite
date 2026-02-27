@@ -333,7 +333,7 @@ class ConciergeWidget {
     
     if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('expensive')) {
       return {
-        type: 'objection',
+        responseType: 'objection',
         message: "I understand pricing is important. We have packages starting at $1,500/mo for 5 clips per week. Most clients see 3-5x ROI within the first 90 days. Would you like me to recommend the best package for your goals?",
         quickActions: ['Yes, recommend package', 'Tell me more about pricing']
       };
@@ -341,14 +341,14 @@ class ConciergeWidget {
     
     if (lowerMessage.includes('not sure') || lowerMessage.includes('think') || lowerMessage.includes('maybe')) {
       return {
-        type: 'objection',
+        responseType: 'objection',
         message: "Totally understand - this is an important decision. How about I send you our content plan template to review while you think it over? No pressure, just helpful resources.",
         quickActions: ['Send template', 'I have questions']
       };
     }
     
     return {
-      type: 'question',
+      responseType: 'question',
       message: "Thanks for that! Let me ask you: " + (this.questions[this.currentQuestion]?.text || "What's your biggest goal right now?")
     };
   }
@@ -360,7 +360,7 @@ class ConciergeWidget {
     const nextStep = this.getNextStep(tier);
     
     return {
-      type: 'recommendation',
+      responseType: 'recommendation',
       leadScore: score,
       intentTier: tier,
       recommendedPackage: package,
