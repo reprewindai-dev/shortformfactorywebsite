@@ -36,6 +36,8 @@
     { "source": "/services.html", "destination": "/services", "permanent": true },
     { "source": "/contact.html", "destination": "/contact", "permanent": true },
     { "source": "/about.html", "destination": "/about", "permanent": true },
+    { "source": "/demo.html", "destination": "/demo", "permanent": true },
+    { "source": "/admin.html", "destination": "/admin", "permanent": true },
 
     { "source": "/terms.html", "destination": "/terms", "permanent": true },
     { "source": "/privacy.html", "destination": "/privacy", "permanent": true },
