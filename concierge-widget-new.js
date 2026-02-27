@@ -12,19 +12,19 @@ class ConciergeWidget {
       {
         id: 'business',
         text: "What do you sell? (e.g., coaching, courses, products, services)",
-        type: 'text',
+        inputType: 'text',
         placeholder: "Tell me about your business..."
       },
       {
         id: 'target_audience',
         text: "Who do you sell to? (e.g., entrepreneurs, fitness enthusiasts, B2B SaaS)",
-        type: 'text',
+        inputType: 'text',
         placeholder: "Describe your ideal customers..."
       },
       {
         id: 'revenue',
         text: "What's your current monthly revenue range?",
-        type: 'buttons',
+        inputType: 'buttons',
         options: [
           { value: '0-5k', label: '$0 - $5K' },
           { value: '5k-25k', label: '$5K - $25K' },
@@ -35,7 +35,7 @@ class ConciergeWidget {
       {
         id: 'marketing_budget',
         text: "What's your monthly marketing budget or what are you willing to invest in content?",
-        type: 'buttons',
+        inputType: 'buttons',
         options: [
           { value: '0-500', label: '$0 - $500' },
           { value: '500-2000', label: '$500 - $2,000' },
@@ -46,13 +46,13 @@ class ConciergeWidget {
       {
         id: 'content_needs',
         text: "How many clips per week do you need and which platforms?",
-        type: 'text',
+        inputType: 'text',
         placeholder: "e.g., 10 clips/week on TikTok and Instagram Reels"
       },
       {
         id: 'bottleneck',
         text: "What's your biggest bottleneck right now?",
-        type: 'buttons',
+        inputType: 'buttons',
         options: [
           { value: 'editing', label: 'Video editing/production' },
           { value: 'strategy', label: 'Content strategy' },
@@ -64,7 +64,7 @@ class ConciergeWidget {
       {
         id: 'timeline',
         text: "When are you looking to start?",
-        type: 'buttons',
+        inputType: 'buttons',
         options: [
           { value: 'asap', label: 'ASAP' },
           { value: '30days', label: 'Within 30 days' },
@@ -74,7 +74,7 @@ class ConciergeWidget {
       {
         id: 'decision_maker',
         text: "Are you the decision maker for marketing investments?",
-        type: 'buttons',
+        inputType: 'buttons',
         options: [
           { value: 'yes', label: 'Yes' },
           { value: 'no', label: 'No, need to consult' }
@@ -320,7 +320,7 @@ class ConciergeWidget {
         const nextQuestion = this.questions[this.currentQuestion];
         let response = { type: 'question', message: nextQuestion.text };
         
-        if (nextQuestion.type === 'buttons') {
+        if (nextQuestion.inputType === 'buttons') {
           response.quickActions = nextQuestion.options.map(opt => opt.label);
         }
         
