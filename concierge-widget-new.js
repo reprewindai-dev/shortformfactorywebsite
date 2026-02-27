@@ -259,14 +259,14 @@ class ConciergeWidget {
       const response = await this.callAI(message);
       this.hideTyping();
       
-      if (response.type === 'question') {
+      if (response.responseType === 'question') {
         this.addMessage('assistant', response.message);
         if (response.quickActions) {
           this.addQuickActions(response.quickActions);
         }
-      } else if (response.type === 'recommendation') {
+      } else if (response.responseType === 'recommendation') {
         this.showRecommendation(response);
-      } else if (response.type === 'objection') {
+      } else if (response.responseType === 'objection') {
         this.handleObjection(response);
       }
     } catch (error) {
@@ -318,7 +318,7 @@ class ConciergeWidget {
       } else {
         // Ask next question
         const nextQuestion = this.questions[this.currentQuestion];
-        let response = { type: 'question', message: nextQuestion.text };
+        let response = { responseType: 'question', message: nextQuestion.text };
         
         if (nextQuestion.inputType === 'buttons') {
           response.quickActions = nextQuestion.options.map(opt => opt.label);
