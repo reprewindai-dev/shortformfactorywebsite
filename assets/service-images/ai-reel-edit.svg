@@ -1,0 +1,44 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg)"/>
+  
+  <!-- Video editing interface -->
+  <rect x="20" y="20" width="360" height="200" rx="8" fill="url(#card)" opacity="0.9"/>
+  
+  <!-- Timeline -->
+  <rect x="40" y="180" width="320" height="8" rx="4" fill="#667eea"/>
+  <rect x="40" y="180" width="120" height="8" rx="4" fill="#00ff88"/>
+  
+  <!-- Video frames -->
+  <rect x="40" y="40" width="80" height="60" rx="4" fill="#2d2d44" stroke="#667eea" stroke-width="2"/>
+  <rect x="130" y="40" width="80" height="60" rx="4" fill="#2d2d44" stroke="#667eea" stroke-width="2"/>
+  <rect x="220" y="40" width="80" height="60" rx="4" fill="#2d2d44" stroke="#667eea" stroke-width="2"/>
+  
+  <!-- AI indicators -->
+  <circle cx="80" cy="70" r="8" fill="#00ff88"/>
+  <circle cx="170" cy="70" r="8" fill="#00ff88"/>
+  <circle cx="260" cy="70" r="8" fill="#00ff88"/>
+  
+  <!-- Play button -->
+  <circle cx="200" cy="100" r="20" fill="#667eea" opacity="0.8"/>
+  <polygon points="195,95 195,105 205,100" fill="white"/>
+  
+  <!-- AI icon -->
+  <rect x="320" y="40" width="40" height="40" rx="8" fill="#00ff88" opacity="0.2"/>
+  <text x="340" y="65" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#00ff88" text-anchor="middle">AI</text>
+  
+  <!-- Service title -->
+  <text x="200" y="250" font-family="Space Grotesk, sans-serif" font-size="24" font-weight="600" fill="white" text-anchor="middle">AI Reel Edit</text>
+  <text x="200" y="275" font-family="Space Grotesk, sans-serif" font-size="14" fill="white" opacity="0.8" text-anchor="middle">Smart Scene Detection & Viral Transitions</text>
+</svg>

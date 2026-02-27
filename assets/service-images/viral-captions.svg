@@ -1,0 +1,64 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg)"/>
+  
+  <!-- Video frame with captions -->
+  <rect x="20" y="20" width="360" height="200" rx="8" fill="url(#card)" opacity="0.9"/>
+  
+  <!-- Video content area -->
+  <rect x="40" y="40" width="320" height="120" rx="4" fill="#2d2d44"/>
+  
+  <!-- Animated caption words -->
+  <rect x="60" y="80" width="40" height="20" rx="4" fill="#00ff88" opacity="0.8"/>
+  <rect x="110" y="80" width="50" height="20" rx="4" fill="#667eea" opacity="0.8"/>
+  <rect x="170" y="80" width="35" height="20" rx="4" fill="#00ff88" opacity="0.8"/>
+  <rect x="215" y="80" width="45" height="20" rx="4" fill="#667eea" opacity="0.8"/>
+  <rect x="270" y="80" width="40" height="20" rx="4" fill="#00ff88" opacity="0.8"/>
+  
+  <!-- Caption timing indicators -->
+  <circle cx="80" cy="60" r="4" fill="#00ff88"/>
+  <circle cx="135" cy="60" r="4" fill="#667eea"/>
+  <circle cx="187" cy="60" r="4" fill="#00ff88"/>
+  <circle cx="237" cy="60" r="4" fill="#667eea"/>
+  <circle cx="290" cy="60" r="4" fill="#00ff88"/>
+  
+  <!-- Sound waves muted -->
+  <path d="M50 180 Q55 175, 60 180 T70 180" stroke="#ff4444" stroke-width="2" fill="none"/>
+  <path d="M50 190 Q55 185, 60 190 T70 190" stroke="#ff4444" stroke-width="2" fill="none"/>
+  <line x1="75" y1="175" x2="75" y2="195" stroke="#ff4444" stroke-width="2"/>
+  
+  <!-- Volume indicator with "X" -->
+  <circle cx="85" cy="185" r="8" fill="#ff4444" opacity="0.2"/>
+  <text x="85" y="190" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ff4444" text-anchor="middle">✕</text>
+  
+  <!-- Engagement metrics -->
+  <rect x="280" y="40" width="60" height="80" rx="4" fill="#00ff88" opacity="0.1"/>
+  <text x="310" y="60" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#00ff88" text-anchor="middle">3x</text>
+  <text x="310" y="75" font-family="Arial, sans-serif" font-size="10" fill="#00ff88" text-anchor="middle">Watch</text>
+  <text x="310" y="90" font-family="Arial, sans-serif" font-size="10" fill="#00ff88" text-anchor="middle">Time</text>
+  
+  <!-- Emoji indicators -->
+  <circle cx="150" cy="180" r="8" fill="#667eea" opacity="0.2"/>
+  <text x="150" y="185" font-family="Arial, sans-serif" font-size="12" fill="#667eea" text-anchor="middle">😊</text>
+  
+  <circle cx="200" cy="180" r="8" fill="#667eea" opacity="0.2"/>
+  <text x="200" y="185" font-family="Arial, sans-serif" font-size="12" fill="#667eea" text-anchor="middle">🎯</text>
+  
+  <circle cx="250" cy="180" r="8" fill="#667eea" opacity="0.2"/>
+  <text x="250" y="185" font-family="Arial, sans-serif" font-size="12" fill="#667eea" text-anchor="middle">🔥</text>
+  
+  <!-- Service title -->
+  <text x="200" y="250" font-family="Space Grotesk, sans-serif" font-size="24" font-weight="600" fill="white" text-anchor="middle">Viral Captions</text>
+  <text x="200" y="275" font-family="Space Grotesk, sans-serif" font-size="14" fill="white" opacity="0.8" text-anchor="middle">Animated Word-by-Word Delivery</text>
+</svg>
