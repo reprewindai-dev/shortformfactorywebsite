@@ -1,8 +1,33 @@
+import { Resend } from 'resend';
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Concierge <concierge@shortformfactory.com>';
+const SALES_ALERT_EMAIL = process.env.SALES_ALERT_EMAIL || 'shortformfactory.help@gmail.com';
+
 // Enhanced Lead Creation API with Email Notifications
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+async function sendEmailSafely({ to, subject, body }) {
+  if (!resend) {
+    console.log('Resend not configured. Skipping email send.', { to, subject });
+    console.log(body);
+    return;
+  }
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject,
+      html: body.replace(/\n/g, '<br>'),
+    });
+  } catch (error) {
+    console.error('Failed to send email via Resend:', error);
+  }
+}
 
   try {
     const {
@@ -122,16 +147,7 @@ Next Steps:
 Book a call: https://calendly.com/shortformfactory/strategy-call
   `;
 
-  // In production, use Resend:
-  // await resend.emails.send({
-  //   from: 'concierge@shortformfactory.com',
-  //   to: 'shortformfactory.help@gmail.com',
-  //   subject: subject,
-  //   html: body.replace(/\n/g, '<br>')
-  // });
-  
-  console.log('HOT LEAD NOTIFICATION:', subject);
-  console.log(body);
+  await sendEmailSafely({ to: SALES_ALERT_EMAIL, subject, body });
 }
 
 async function sendLeadConfirmation(leadData) {
@@ -219,17 +235,7 @@ The ShortFormFactory Team
       `;
   }
   
-  // In production, use Resend:
-  // await resend.emails.send({
-  //   from: 'concierge@shortformfactory.com',
-  //   to: email,
-  //   subject: subject,
-  //   html: body.replace(/\n/g, '<br>')
-  // });
-  
-  console.log('LEAD CONFIRMATION EMAIL:', subject);
-  console.log('To:', email);
-  console.log(body);
+  await sendEmailSafely({ to: email, subject, body });
 }
 
 async function storeConversation(sessionId, data) {

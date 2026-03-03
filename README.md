@@ -51,6 +51,10 @@ Update the PayPal SDK script in `order.html` with your client ID:
    - `PAYPAL_CLIENT_ID`
    - `PAYPAL_CLIENT_SECRET`
    - `PAYPAL_WEBHOOK_ID`
+   - `HUGGINGFACE_API_KEY` *(optional — unlocks AI responses; fallback logic works without it)*
+   - `RESEND_API_KEY` *(optional — enables Concierge email delivery)*
+   - `RESEND_FROM_EMAIL` *(optional — defaults to `Concierge <concierge@shortformfactory.com>`)*
+   - `SALES_ALERT_EMAIL` *(optional — defaults to `shortformfactory.help@gmail.com` for hot lead alerts)*
 4. Deploy
 
 ### 3. Testing with PayPal Sandbox
