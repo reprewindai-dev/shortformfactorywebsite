@@ -57,6 +57,7 @@
   }
   </script>
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/concierge-widget-new.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -101,8 +102,9 @@
         Professional short-form video editing with instant AI-powered recommendations.
       </p>
       <div class="hero-cta">
-        <button class="btn btn-primary" onclick="window.concierge && window.concierge.open()">Talk to Concierge</button>
-        <a href="https://calendly.com/shortformfactory/strategy-call" class="btn btn-secondary" target="_blank">Book a Call</a>
+        <a href="/order" class="btn btn-primary">Start Service</a>
+        <button class="btn btn-secondary" type="button" onclick="window.concierge && window.concierge.open()">Talk to Concierge</button>
+        <a href="https://calendly.com/shortformfactory/strategy-call" class="btn btn-ghost" target="_blank" rel="noopener">Book a Call</a>
       </div>
     </div>
   </section>
@@ -177,7 +179,7 @@
           <li>2 revisions per month</li>
           <li>48-hour delivery</li>
         </ul>
-        <button class="btn btn-secondary" onclick="window.concierge && window.concierge.open()">Get Started</button>
+        <a href="/order?plan=starter" class="btn btn-secondary">Start Service</a>
       </div>
       <div class="pricing-card featured">
         <div class="pricing-badge">Most Popular</div>
@@ -192,7 +194,7 @@
           <li>24-hour delivery</li>
           <li>Performance analytics</li>
         </ul>
-        <button class="btn btn-primary" onclick="window.concierge && window.concierge.open()">Get Started</button>
+        <a href="/order?plan=growth" class="btn btn-primary">Start Service</a>
       </div>
       <div class="pricing-card">
         <div class="pricing-header">
@@ -206,7 +208,7 @@
           <li>12-hour delivery</li>
           <li>Dedicated account manager</li>
         </ul>
-        <button class="btn btn-secondary" onclick="window.concierge && window.concierge.open()">Get Started</button>
+        <a href="/order?plan=scale" class="btn btn-secondary">Start Service</a>
       </div>
     </div>
   </section>
@@ -381,7 +383,6 @@
   <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
   <canvas id="particleCanvas"></canvas>
   <script src="/main.js" defer></script>
-  <link rel="stylesheet" href="/concierge-widget-new.css">
   <script src="/concierge-widget-new.js" defer></script>
   
   <script>

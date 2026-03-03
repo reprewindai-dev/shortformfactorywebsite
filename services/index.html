@@ -1,19 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Services - ShortFormFactory</title>
-<meta name="description" content="Flat-rate short-form video editing packages for agencies and professional teams. Transparent pricing, 12-to-24-hour turnaround, no hidden fees.">
-<link rel="stylesheet" href="/style.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script defer src="https://cdn.vercel-analytics.com/v1/script.js"></script>
-  <script src="/concierge-widget-new.js"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PE956KT8DY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);} 
+    gtag('consent', 'default', {
+      'analytics_storage': 'denied',
+      'ad_storage': 'denied'
+    });
+    gtag('js', new Date());
+    gtag('config', 'G-PE956KT8DY');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Short Form Editing Services | ShortFormFactory</title>
+  <meta name="description" content="Flat-rate short-form video editing packages with transparent pricing, premium design, and 12–24 hour turnaround times.">
+  <link rel="canonical" href="https://shortformfactory.com/services">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Short Form Video Editing Services">
+  <meta property="og:title" content="Short Form Editing Services | ShortFormFactory">
+  <meta property="og:description" content="Flat-rate short-form video editing packages with transparent pricing, premium design, and 12–24 hour turnaround times.">
+  <meta property="og:url" content="https://shortformfactory.com/services">
+  <meta property="og:image" content="https://shortformfactory.com/assets/og-banner.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Short Form Video Editing Services">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Short Form Editing Services | ShortFormFactory">
+  <meta name="twitter:description" content="Flat-rate short-form video editing packages with transparent pricing, premium design, and 12–24 hour turnaround times.">
+  <meta name="twitter:image" content="https://shortformfactory.com/assets/og-banner.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "Short Form Video Editing",
+    "provider": {
+      "@type": "Organization",
+      "name": "ShortFormFactory"
+    },
+    "areaServed": "Worldwide",
+    "serviceType": "Short-form video editing"
+  }
+  </script>
+  <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/concierge-widget-new.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script defer src="https://cdn.vercel-analytics.com/v1/script.js"></script>
+  <script src="/cookie-consent.js" defer></script>
 </head>
-<body>
+<body class="page services-page">
   <div class="bg-grid"></div>
   
   <header class="header" id="header">
@@ -28,7 +67,10 @@
         <span></span>
       </button>
       <nav class="nav" id="mainNav">
-        <a href="/services" class="nav-link">Services</a>
+        <a href="/" class="nav-link">Home</a>
+        <a href="/services" class="nav-link active">Services</a>
+        <a href="/demo" class="nav-link">Demo</a>
+        <a href="/blog" class="nav-link">Blog</a>
         <a href="/order" class="nav-link">Order</a>
         <a href="/contact" class="nav-link">Contact</a>
       </nav>
@@ -325,6 +367,9 @@
         <ul class="footer-links">
           <li><a href="/services">All Services</a></li>
           <li><a href="/order">Place Order</a></li>
+          <li><a href="/services#ai-reel-edit">AI Reel Edit</a></li>
+          <li><a href="/services#viral-captions">Viral Captions</a></li>
+          <li><a href="/services#podcast-repurpose">Podcast Repurpose</a></li>
         </ul>
       </div>
       <div class="footer-section">
@@ -332,6 +377,8 @@
         <ul class="footer-links">
           <li><a href="/about">About</a></li>
           <li><a href="/contact">Contact</a></li>
+          <li><a href="/demo">Demo</a></li>
+          <li><a href="/blog">Blog</a></li>
         </ul>
       </div>
       <div class="footer-section">
@@ -353,6 +400,7 @@
   <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
   <canvas id="particleCanvas"></canvas>
   <script src="/main.js" defer></script>
+  <script src="/concierge-widget-new.js" defer></script>
 </body>
 </html>
 
