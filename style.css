@@ -90,13 +90,22 @@ a:hover{text-shadow:0 0 16px rgba(198,255,64,.6)}
 .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 @media(max-width:1100px){.services-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:680px){.services-grid{grid-template-columns:1fr}}
-.service-card{background:#0b0b0b;border:1px solid #1b1b1b;border-radius:16px;overflow:hidden;transition:.22s transform,.22s box-shadow}
-.service-card:hover{transform:translateY(-6px);box-shadow:0 0 26px rgba(198,255,64,.45)}
-.service-card-content{padding:18px}
-.service-icon{font-size:28px}
-.service-title{margin:.4rem 0}
-.service-pricing{color:var(--neon);font-weight:800;margin:.4rem 0}
-.service-features{margin:.6rem 0 1rem 1rem;color:var(--muted)}
+.service-card{background:#0b0b0b;border:1px solid #1b1b1b;border-radius:20px;overflow:hidden;transition:.22s transform,.22s box-shadow;position:relative}
+.service-card:hover{transform:translateY(-6px);box-shadow:0 0 32px rgba(198,255,64,.45)}
+.service-card-content{padding:20px;display:flex;flex-direction:column;gap:14px}
+.service-image-container{position:relative;border-radius:18px;overflow:hidden;min-height:220px;background:linear-gradient(120deg,#0f1110,#050505);border:1px solid #1f1f1f;box-shadow:0 20px 45px rgba(0,0,0,.55)}
+.service-image{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.015);transition:transform .4s ease}
+.service-card:hover .service-image{transform:scale(1.05)}
+.service-overlay{position:absolute;left:18px;right:18px;bottom:18px;display:flex;gap:8px;flex-wrap:wrap}
+.service-pill{padding:6px 12px;border-radius:999px;background:rgba(0,0,0,.62);border:1px solid rgba(198,255,64,.45);font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#eafed1}
+.service-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:.78rem;letter-spacing:.18em;text-transform:uppercase}
+.service-title{margin:.4rem 0;font-size:1.25rem}
+.service-pricing{color:var(--neon);font-weight:800;margin:.2rem 0}
+.service-desc{color:#d4d8dd;margin:0}
+.service-features{margin:.6rem 0 1rem 1.1rem;color:var(--muted)}
+.service-cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.22);color:#fff}
+.btn-ghost:hover{border-color:var(--neon);color:var(--neon);box-shadow:0 0 18px rgba(198,255,64,.35)}
 
 .addons-section{margin-top:28px}
 .addons-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
