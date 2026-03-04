@@ -44,6 +44,15 @@
       margin: 0 auto;
       padding: 4rem 2rem;
     }
+
+    .demo-metric::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(198,255,64,0.18), transparent 55%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
     
     .demo-grid {
       display: grid;
@@ -64,6 +73,235 @@
       border: 1px solid #333;
       border-radius: 16px;
       padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .demo-headline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .demo-highlight {
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .demo-highlight::before {
+      content: '';
+      width: 36px;
+      height: 1px;
+      background: rgba(255,255,255,0.2);
+    }
+
+    .demo-player {
+      background: radial-gradient(circle at 25% 15%, rgba(198,255,64,0.15), rgba(0,0,0,0.9));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 1.25rem;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .demo-preview {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: #050505;
+    }
+
+    .demo-preview canvas {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .demo-caption-overlay {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      pointer-events: none;
+    }
+
+    .demo-caption-bubble {
+      background: rgba(0,0,0,0.82);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 48px;
+      padding: 0.7rem 1.75rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      box-shadow: 0 18px 35px rgba(0,0,0,0.65);
+      align-self: flex-start;
+    }
+
+    .demo-caption-bubble.accent {
+      background: rgba(198,255,64,0.18);
+      border-color: rgba(198,255,64,0.6);
+      color: #e5ffd1;
+      align-self: flex-end;
+    }
+
+    .demo-progress {
+      height: 8px;
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      margin-top: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .demo-progress span {
+      display: block;
+      height: 100%;
+      width: 10%;
+      background: linear-gradient(90deg, #C6FF40, #8CFF00);
+      border-radius: inherit;
+      transition: width 0.2s ease;
+    }
+
+    .demo-progress::after {
+      content: attr(data-timestamp);
+      position: absolute;
+      right: 12px;
+      top: -30px;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .demo-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .demo-presets {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .demo-preset-btn {
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 14px;
+      padding: 0.9rem 1rem;
+      text-align: left;
+      background: rgba(255,255,255,0.02);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #fff;
+    }
+
+    .demo-preset-btn strong {
+      display: block;
+      font-size: 1rem;
+    }
+
+    .demo-preset-btn span {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .demo-preset-btn.active {
+      border-color: var(--neon);
+      background: rgba(198,255,64,0.08);
+      box-shadow: 0 10px 30px rgba(198,255,64,0.2);
+    }
+
+    .demo-presets small {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .demo-toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .demo-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 0.45rem 0.9rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.85);
+      cursor: pointer;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .demo-toggle input {
+      accent-color: var(--neon);
+    }
+
+    .demo-status {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .demo-status span {
+      display: inline-flex;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #06f46b;
+      box-shadow: 0 0 12px rgba(6,244,107,0.6);
+    }
+
+    .demo-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .demo-metric {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .demo-metric label {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 0.35rem;
+    }
+
+    .demo-metric strong {
+      font-size: 1.4rem;
     }
     
     .demo-video {
@@ -192,8 +430,8 @@
 </head>
 <body class="demo">
   <div class="bg-grid"></div>
-  
-  <header class="header" id="header">
+ 
+<header class="header" id="header">
     <div class="header-content">
       <a href="/" class="logo">
         <img src="/assets/logo.svg" alt="ShortFormFactory" class="logo-img" width="40" height="40">
@@ -204,16 +442,17 @@
         <span></span>
         <span></span>
       </button>
-          <nav class="nav" id="mainNav">
+      <nav class="nav" id="mainNav">
         <a href="/" class="nav-link">Home</a>
         <a href="/services" class="nav-link">Services</a>
-        <a href="/demo" class="nav-link active">Demo</a>
+        <a href="/demo" class="nav-link">Demo</a>
         <a href="/blog" class="nav-link">Blog</a>
         <a href="/order" class="nav-link">Order</a>
         <a href="/contact" class="nav-link">Contact</a>
       </nav>
     </div>
   </header>
+
 
   <main class="page-content">
     <section class="demo-section">
@@ -284,77 +523,135 @@
         </div>
 
         <div class="live-demo">
-          <h2>Live Demo: Viral Captions Service</h2>
-          <p>Experience our highest retention service - animated captions that keep viewers watching 3x longer.</p>
-          
-          <div class="demo-video">
-            <div class="demo-placeholder">
-              <h3>Interactive Demo Coming Soon</h3>
-              <p>Try our viral captions demo and see the difference</p>
-              <div class="demo-controls">
-                <button class="demo-btn" onclick="startDemo()">Start Demo</button>
-                <button class="demo-btn secondary" onclick="resetDemo()">Reset</button>
+          <div class="demo-headline">
+            <div>
+              <h2>Live Demo: Viral Captions Service</h2>
+              <p>Switch presets, toggle creative layers, and watch the canvas respond in real time.</p>
+            </div>
+            <div class="demo-status"><span></span>Realtime render • 24 FPS</div>
+          </div>
+
+          <div class="demo-player">
+            <div class="demo-preview">
+              <canvas id="demoCanvas" width="640" height="360" aria-label="Viral captions sample render"></canvas>
+              <div class="demo-caption-overlay">
+                <div class="demo-caption-bubble" id="captionPrimary">CAPTION STREAM LOADING</div>
+                <div class="demo-caption-bubble accent" id="captionAccent">HOLD TIGHT...</div>
               </div>
+            </div>
+            <div class="demo-progress" id="demoProgress" data-timestamp="00:00 / 00:24">
+              <span></span>
             </div>
           </div>
-          
-          <div style="margin-top: 2rem;">
-            <h3>Why Viral Captions?</h3>
-            <ul style="list-style: none; padding: 0;">
-              <li style="margin-bottom: 0.5rem;">✅ 3x longer watch time</li>
-              <li style="margin-bottom: 0.5rem;">✅ 85% of videos watched without sound</li>
-              <li style="margin-bottom: 0.5rem;">✅ Custom fonts & brand colors</li>
-              <li style="margin-bottom: 0.5rem;">✅ Animated word-by-word delivery</li>
-              <li style="margin-bottom: 0.5rem;">✅ Strategic emoji integration</li>
-            </ul>
-            
-            <div style="margin-top: 2rem;">
-              <h4>Pricing:</h4>
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;">
-                <div style="text-align: center; padding: 1rem; background: #0b0b0b; border: 1px solid #1b1b1b; border-radius: 8px;">
-                  <div style="font-weight: 700; color: var(--neon);">Basic</div>
-                  <div style="font-size: 1.5rem; font-weight: 700;">$20</div>
-                  <div style="font-size: 0.9rem; color: var(--muted);">5 videos</div>
-                </div>
-                <div style="text-align: center; padding: 1rem; background: #0b0b0b; border: 1px solid #1b1b1b; border-radius: 8px;">
-                  <div style="font-weight: 700; color: var(--neon);">Standard</div>
-                  <div style="font-size: 1.5rem; font-weight: 700;">$50</div>
-                  <div style="font-size: 0.9rem; color: var(--muted);">15 videos</div>
-                </div>
-                <div style="text-align: center; padding: 1rem; background: #0b0b0b; border: 1px solid #1b1b1b; border-radius: 8px;">
-                  <div style="font-weight: 700; color: var(--neon);">Premium</div>
-                  <div style="font-size: 1.5rem; font-weight: 700;">$110</div>
-                  <div style="font-size: 0.9rem; color: var(--muted);">30 videos</div>
-                </div>
+
+          <div class="demo-controls">
+            <div>
+              <div class="demo-highlight">Preset Library</div>
+              <div class="demo-presets" id="demoPresets">
+                <button class="demo-preset-btn active" data-preset="creator">
+                  <strong>Creator Mode</strong>
+                  <span>Bold neon captains</span>
+                  <small>Optimized for TikTok/Reels</small>
+                </button>
+                <button class="demo-preset-btn" data-preset="coach">
+                  <strong>Coach Mode</strong>
+                  <span>High-trust gradient blocks</span>
+                  <small>Built for webinars & shorts</small>
+                </button>
+                <button class="demo-preset-btn" data-preset="agency">
+                  <strong>Agency Mode</strong>
+                  <span>Editorial split screen</span>
+                  <small>Pairs with paid social</small>
+                </button>
               </div>
             </div>
-            
-            <div style="margin-top: 2rem; text-align: center;">
-              <a href="/order?service=viralCaptions" class="btn btn-primary">Try Viral Captions Now</a>
+
+            <div>
+              <div class="demo-highlight">Toggles</div>
+              <div class="demo-toggles">
+                <label class="demo-toggle">
+                  <input type="checkbox" id="toggleCaptions" checked>
+                  Animate captions
+                </label>
+                <label class="demo-toggle">
+                  <input type="checkbox" id="toggleBroll" checked>
+                  B-roll overlays
+                </label>
+                <label class="demo-toggle">
+                  <input type="checkbox" id="toggleColor">
+                  Color lift
+                </label>
+                <label class="demo-toggle">
+                  <input type="checkbox" id="toggleStickers" checked>
+                  CTA stickers
+                </label>
+              </div>
+            </div>
+
+            <div class="demo-metrics" id="demoMetrics">
+              <div class="demo-metric">
+                <label>Average Retention</label>
+                <strong>72%</strong>
+                <span style="font-size:0.8rem;color:rgba(255,255,255,0.6)">↑ +38 pts vs raw</span>
+              </div>
+              <div class="demo-metric">
+                <label>Tap-through Rate</label>
+                <strong>11.4%</strong>
+                <span style="font-size:0.8rem;color:rgba(255,255,255,0.6)">with CTA sticker</span>
+              </div>
+              <div class="demo-metric">
+                <label>Caption Speed</label>
+                <strong>128wpm</strong>
+                <span style="font-size:0.8rem;color:rgba(255,255,255,0.6)">auto-calibrated</span>
+              </div>
+              <div class="demo-metric">
+                <label>Output ETA</label>
+                <strong>5 hrs</strong>
+                <span style="font-size:0.8rem;color:rgba(255,255,255,0.6)">per batch of 10</span>
+              </div>
+            </div>
+
+            <div class="demo-controls" style="flex-direction:row;justify-content:space-between;align-items:center;">
+              <button class="demo-btn" id="demoReplay">Replay Demo</button>
+              <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+                <a href="/order?service=viralCaptions" class="btn btn-primary">Order Viral Captions</a>
+                <button class="btn btn-secondary" type="button" onclick="window.openConcierge && window.openConcierge()">Talk to Concierge</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
   </main>
-
-  <footer class="footer">
+<footer class="footer">
     <div class="footer-content">
-      <div class="footer-section">
+      <div class="footer-section footer-brand">
         <div class="footer-logo">
-          <img src="/assets/logo.svg" alt="ShortFormFactory" width="50" height="50">
+          <img src="/assets/logo.svg" alt="ShortFormFactory" class="logo-img" width="50" height="50">
           <h3>ShortFormFactory</h3>
         </div>
-        <p>Professional short-form video editing services for agencies and businesses. Fast turnaround, transparent pricing, viral results.</p>
+        <p>Professional short-form video editing services for agencies, consultants, and professional teams across North America.</p>
         <div class="footer-social">
+          <a href="https://www.tiktok.com/@short.formfactory" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@short.formfactory" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/></svg>
+          </a>
           <a href="https://www.instagram.com/short.formfactory" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.405a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
           </a>
-          <a href="https://www.tiktok.com/@shortformfactory" target="_blank" rel="noopener" aria-label="TikTok">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.25 1.12 1.16 2.91 1.75 4.25 1.75v5.02c-1.76-.02-3.46-.46-4.95-1.31-.65-.4-1.26-.87-1.8-1.41-.01 2.86.02 5.73-.02 8.58-.03 1.23-.64 2.44-1.56 3.37-.92.93-2.13 1.55-3.37 1.56-1.24.01-2.45-.62-3.37-1.56-.93-.93-1.53-2.14-1.56-3.37-.03-2.85.01-5.72-.02-8.58.54.54 1.15 1.01 1.8 1.41 1.49.85 3.19 1.29 4.95 1.31v5.02c-1.34 0-3.13-.59-4.25-1.75-1.12-1.16-1.67-2.72-1.75-4.25-.02-1.3-.01-2.6-.02-3.91 0-1.3.01-2.6.02-3.9.01-1.53.63-3.09 1.75-4.25 1.12-1.16 2.91-1.75 4.25-1.75z"/></svg>
+          <a href="https://www.threads.net/@short.formfactory" target="_blank" rel="noopener" aria-label="Threads">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.96-.065-1.187.408-2.136 1.278-2.575.397-.193.84-.31 1.322-.343a19.6 19.6 0 0 1 3.073.105c-.034-.627-.135-1.158-.303-1.587-.36-.918-1.038-1.404-2.014-1.449-.948-.044-1.78.274-2.403.92l-1.416-1.412c.938-.97 2.26-1.49 3.82-1.416 1.634.077 2.863.79 3.555 2.062.448.824.672 1.823.669 2.972v.067c.04.136.07.272.092.41.167.053.333.114.495.185 1.2.521 2.153 1.36 2.757 2.449.758 1.368.89 3.204-.216 5.136-1.768 3.09-4.776 3.753-7.462 3.773zm-1.478-7.928c-.065.29-.037.584.093.843.149.297.463.603 1.063.674 1.073.128 2.016-.217 2.64-.965.453-.543.743-1.274.865-2.184a9.57 9.57 0 0 0-2.632-.244c-.37.018-.639.073-.84.168-.377.178-.364.498-.19.708z"/></svg>
           </a>
-          <a href="https://www.youtube.com/@shortformfactory" target="_blank" rel="noopener" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <a href="https://www.pinterest.com/shortformfactoryhelp" target="_blank" rel="noopener" aria-label="Pinterest">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.04 21.54c.96.29 1.93.46 2.96.46a10 10 0 0 0 10-10A10 10 0 0 0 12 2 10 10 0 0 0 2 12c0 4.25 2.67 7.9 6.44 9.34-.09-.78-.18-2.07 0-2.96l1.15-4.94s-.29-.58-.29-1.5c0-1.38.86-2.41 1.84-2.41.86 0 1.26.63 1.26 1.44 0 .86-.57 2.09-.86 3.27-.17.98.52 1.84 1.52 1.84 1.78 0 3.16-1.9 3.16-4.58 0-2.4-1.72-4.04-4.19-4.04-2.82 0-4.48 2.1-4.48 4.31 0 .86.28 1.73.74 2.3.09.06.09.14.06.29l-.29 1.09c0 .17-.11.23-.28.11-1.28-.56-2.02-2.38-2.02-3.85 0-3.16 2.24-6.03 6.56-6.03 3.44 0 6.12 2.47 6.12 5.75 0 3.44-2.13 6.2-5.18 6.2-.97 0-1.92-.52-2.26-1.13l-.67 2.37c-.23.86-.86 2.01-1.29 2.7z"/></svg>
+          </a>
+          <a href="https://www.tumblr.com/shortformfactory" target="_blank" rel="noopener" aria-label="Tumblr">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.999 0h3.517v6.114h4.801v3.633h-4.82v7.47c.016 1.001.375 2.371 2.207 2.371h.09c.631-.02 1.486-.205 1.936-.419l1.156 3.425c-.436.636-2.4 1.374-4.156 1.404h-.168z"/></svg>
+          </a>
+          <a href="https://linkedin.com/in/anthony-m-a1410b3a2" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
           </a>
         </div>
       </div>
@@ -363,9 +660,6 @@
         <ul class="footer-links">
           <li><a href="/services">All Services</a></li>
           <li><a href="/order">Place Order</a></li>
-          <li><a href="/services#ai-reel-edit">AI Reel Edit</a></li>
-          <li><a href="/services#viral-captions">Viral Captions</a></li>
-          <li><a href="/services#podcast-repurpose">Podcast Repurpose</a></li>
         </ul>
       </div>
       <div class="footer-section">
@@ -392,6 +686,9 @@
       <p>Email: <a href="mailto:shortformfactory.help@gmail.com">shortformfactory.help@gmail.com</a></p>
     </div>
   </footer>
+
+
+
 
   <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
   <canvas id="particleCanvas"></canvas>
@@ -437,18 +734,166 @@
       document.getElementById('roiResults').classList.add('show');
     }
     
-    function startDemo() {
-      alert('Demo functionality coming soon! For now, try our ROI calculator to see your potential returns.');
-    }
-    
-    function resetDemo() {
-      document.getElementById('roiResults').classList.remove('show');
-      document.getElementById('currentVideos').value = '10';
-      document.getElementById('avgViews').value = '1000';
-      document.getElementById('conversionRate').value = '2';
-      document.getElementById('avgOrderValue').value = '100';
-      document.getElementById('servicePackage').value = 'basic';
-    }
+    (function initLiveDemo(){
+      const canvas = document.getElementById('demoCanvas');
+      if(!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const captionPrimary = document.getElementById('captionPrimary');
+      const captionAccent = document.getElementById('captionAccent');
+      const progressBar = document.querySelector('#demoProgress span');
+      const progressTrack = document.getElementById('demoProgress');
+      const presetButtons = document.querySelectorAll('#demoPresets .demo-preset-btn');
+      const replayBtn = document.getElementById('demoReplay');
+
+      const CAPTION_SETS = {
+        creator: {
+          primary: ['STOP SCROLLING', 'HOOK YOUR AUDIENCE', 'TURN VIEWS INTO CLIENTS'],
+          accent: ['Caption stack w/ neon stroke', 'Auto emoji pacing']
+        },
+        coach: {
+          primary: ['COACH MODE ENGAGED', 'TEACH VISUALLY', 'DROP ACTION STEPS'],
+          accent: ['Gradient blocks for clarity', 'Double-line subtitles']
+        },
+        agency: {
+          primary: ['AGENCY SPLIT SCREEN', 'CLIENT LOGO LOCKUP', 'CASE STUDY CTA'],
+          accent: ['Lower-third ticker', 'Color-matched overlays']
+        }
+      };
+
+      const PRESETS = {
+        creator: {
+          bg: ['#040404','#101010'],
+          accent: '#C6FF40',
+          subject: '#111',
+          stickers: ['#8CFF00', '#FF7AF6']
+        },
+        coach: {
+          bg: ['#050015','#140534'],
+          accent: '#7FD0FF',
+          subject: '#090218',
+          stickers: ['#7FD0FF', '#F9E44D']
+        },
+        agency: {
+          bg: ['#020b14','#041c2e'],
+          accent: '#FFB347',
+          subject: '#03101b',
+          stickers: ['#FFB347', '#5CFFE8']
+        }
+      };
+
+      const toggles = {
+        captions: document.getElementById('toggleCaptions'),
+        broll: document.getElementById('toggleBroll'),
+        color: document.getElementById('toggleColor'),
+        stickers: document.getElementById('toggleStickers')
+      };
+
+      const state = {
+        preset: 'creator',
+        elapsed: 0,
+        duration: 24,
+        captionIndex: 0,
+        accentIndex: 0
+      };
+
+      function setPreset(next){
+        state.preset = next;
+        state.captionIndex = 0;
+        state.accentIndex = 0;
+        captionPrimary.textContent = CAPTION_SETS[next].primary[0];
+        captionAccent.textContent = CAPTION_SETS[next].accent[0];
+        presetButtons.forEach(btn=>btn.classList.toggle('active', btn.dataset.preset===next));
+      }
+
+      presetButtons.forEach(btn=>{
+        btn.addEventListener('click', ()=> setPreset(btn.dataset.preset));
+      });
+
+      Object.values(toggles).forEach(toggle=>{
+        toggle.addEventListener('change', ()=>{
+          if(toggle === toggles.captions){
+            document.querySelector('.demo-caption-overlay').style.display = toggle.checked? 'flex':'none';
+          }
+        });
+      });
+
+      replayBtn?.addEventListener('click', ()=>{
+        state.elapsed = 0;
+      });
+
+      let lastTs = 0;
+
+      function drawFrame(delta){
+        const preset = PRESETS[state.preset];
+        const gradient = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+        gradient.addColorStop(0,preset.bg[0]);
+        gradient.addColorStop(1,preset.bg[1]);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        if(toggles.broll.checked){
+          for(let i=0;i<3;i++){
+            const offset = (state.elapsed*20 + i*120) % (canvas.width+200) - 200;
+            ctx.fillStyle = `rgba(255,255,255,${0.04 + i*0.02})`;
+            ctx.fillRect(offset, 40 + i*70, 160, 50);
+          }
+        }
+
+        ctx.fillStyle = preset.subject;
+        ctx.beginPath();
+        ctx.roundRect(40,60,240,240,32);
+        ctx.fill();
+
+        if(toggles.color.checked){
+          const colorGrad = ctx.createLinearGradient(40,60,280,300);
+          colorGrad.addColorStop(0,'rgba(255,255,255,0.02)');
+          colorGrad.addColorStop(1, preset.accent+'33');
+          ctx.fillStyle = colorGrad;
+          ctx.fill();
+        }
+
+        if(toggles.stickers.checked){
+          ctx.fillStyle = preset.stickers[0];
+          ctx.fillRect(canvas.width-180, 60, 140, 40);
+          ctx.fillStyle = '#000';
+          ctx.font = 'bold 16px "Space Grotesk"';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('Tap to book', canvas.width-160, 80);
+
+          ctx.fillStyle = preset.stickers[1];
+          ctx.beginPath();
+          ctx.arc(canvas.width-80, 190 + Math.sin(state.elapsed/4)*8, 26, 0, Math.PI*2);
+          ctx.fill();
+        }
+
+        if(toggles.captions.checked){
+          const captions = CAPTION_SETS[state.preset];
+          state.captionIndex = Math.floor((state.elapsed/4) % captions.primary.length);
+          state.accentIndex = Math.floor((state.elapsed/6) % captions.accent.length);
+          captionPrimary.textContent = captions.primary[state.captionIndex];
+          captionAccent.textContent = captions.accent[state.accentIndex];
+        }
+
+        const progress = (state.elapsed % state.duration) / state.duration;
+        progressBar.style.width = `${Math.min(100, progress*100)}%`;
+        const seconds = Math.floor(state.elapsed % state.duration);
+        const timestamp = `00:${seconds.toString().padStart(2,'0')} / 00:${state.duration.toString().padStart(2,'0')}`;
+        progressTrack?.setAttribute('data-timestamp', timestamp);
+      }
+
+      function loop(ts){
+        if(!lastTs) lastTs = ts;
+        const delta = ts - lastTs;
+        lastTs = ts;
+        state.elapsed += delta/1000;
+        drawFrame(delta);
+        requestAnimationFrame(loop);
+      }
+
+      setPreset('creator');
+      requestAnimationFrame(loop);
+    })();
   </script>
 </body>
 </html>

@@ -9,6 +9,28 @@
 
   window.SFFOrder = window.SFFOrder || {};
 
+  function tryOpenConcierge() {
+    if (window.concierge && typeof window.concierge.open === 'function') {
+      window.concierge.open();
+      return true;
+    }
+    return false;
+  }
+
+  window.openConcierge = function openConcierge() {
+    if (!tryOpenConcierge()) {
+      window.__pendingConciergeOpen = true;
+      console.warn('Concierge not ready yet. Queuing open request.');
+    }
+  };
+
+  window.addEventListener('concierge:ready', () => {
+    if (window.__pendingConciergeOpen) {
+      window.__pendingConciergeOpen = false;
+      tryOpenConcierge();
+    }
+  });
+
   // Mobile menu
   const toggle = $('#mobileMenuToggle');
   const nav = $('#mainNav');

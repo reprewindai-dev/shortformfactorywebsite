@@ -95,8 +95,9 @@ class ConciergeWidget {
   init() {
     this.createWidget();
     this.setupEventListeners();
-    this.scheduleProactiveOpen();
+    this.queueInstantGreeting();
     this.trackEvent('widget_loaded');
+    window.dispatchEvent(new Event('concierge:ready'));
   }
 
   createWidget() {
@@ -170,12 +171,12 @@ class ConciergeWidget {
     textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
   }
 
-  scheduleProactiveOpen() {
+  queueInstantGreeting() {
     setTimeout(() => {
       if (!this.hasProactivelyOpened && !this.isOpen) {
-        this.proactiveOpen('time');
+        this.proactiveOpen('instant_load');
       }
-    }, 8000); // 8 seconds
+    }, 1200);
   }
 
   proactiveOpen(trigger) {
@@ -577,7 +578,7 @@ class ConciergeWidget {
 
   async bookCall() {
     this.trackEvent('booking_clicked', { package: this.recommendPackage() });
-    window.open('https://calendly.com/shortformfactory/strategy-call', '_blank');
+    window.open('https://calendly.com/shortformfactory', '_blank');
     
     this.addMessage('assistant', "Great choice! I've opened the booking calendar for you. Look for a 15-minute strategy session slot that works for you.");
   }
@@ -682,6 +683,7 @@ class ConciergeWidget {
 // Initialize the widget when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   window.concierge = new ConciergeWidget();
+  window.dispatchEvent(new Event('concierge:ready'));
 });
 
 })();
