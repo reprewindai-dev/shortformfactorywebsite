@@ -203,6 +203,17 @@ a:hover{text-shadow:0 0 16px rgba(198,255,64,.6)}
 .total-label{font-weight:800}
 .total-value{font-size:1.4rem;font-weight:900;color:var(--neon)}
 
+.payment-method-group{margin-top:16px}
+.payment-methods{display:flex;flex-direction:column;gap:8px}
+.payment-method-option{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#151515;border:1px solid #222;border-radius:10px;cursor:pointer;transition:all .2s}
+.payment-method-option:hover{border-color:#333}
+.payment-method-option.active{border-color:var(--neon);background:#1a1a1a}
+.payment-method-option input[type="radio"]{accent-color:var(--neon);width:18px;height:18px}
+.payment-method-option div{display:flex;flex-direction:column;gap:2px}
+.payment-method-option strong{color:#fff;font-size:.95rem}
+.payment-method-option span{color:var(--muted);font-size:.8rem}
+.payment-hint{color:var(--muted);font-size:.85rem;margin:12px 0;text-align:center}
+
 .payment-security{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
 .security-badge{display:flex;gap:8px;align-items:center;color:var(--muted)}
 
