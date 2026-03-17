@@ -1,10 +1,18 @@
 /* Concierge Widget - Enhanced Version */
+/* Define fallback CSS variables */
+:root {
+  --neon: #c6ff40;
+  --panel: #0a0a0a;
+  --text: #ffffff;
+  --muted: #888888;
+}
+
 .concierge-widget {
   position: fixed;
   bottom: 20px;
   right: 20px;
   z-index: 9999;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .concierge-toggle {

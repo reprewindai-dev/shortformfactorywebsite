@@ -242,12 +242,42 @@ class ConciergeWidget {
     
     // Add user message
     this.addMessage('user', message);
-    this.userAnswers[this.questions[this.currentQuestion]?.id] = message;
     
     // Clear input and disable send
     input.value = '';
     send.disabled = true;
     this.autoResizeTextarea(input);
+    
+    // Handle email collection states
+    if (this.conversationState.startsWith('collect_email')) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailRegex.test(message)) {
+        this.userAnswers.email = message;
+        
+        // Process based on what triggered email collection
+        if (this.conversationState === 'collect_email_for_call') {
+          await this.submitBookingRequest();
+        } else if (this.conversationState === 'collect_email_for_quote') {
+          await this.submitQuoteRequest();
+        } else if (this.conversationState === 'collect_email_for_template') {
+          await this.submitLeadMagnetRequest();
+        }
+        
+        this.conversationState = 'completed';
+        send.disabled = false;
+        return;
+      } else {
+        this.addMessage('assistant', "That doesn't look like a valid email. Could you double-check and try again?");
+        send.disabled = false;
+        input.focus();
+        return;
+      }
+    }
+    
+    // Store answer for current question
+    if (this.questions[this.currentQuestion]?.id) {
+      this.userAnswers[this.questions[this.currentQuestion].id] = message;
+    }
     
     // Process the response
     await this.processResponse(message);
@@ -635,38 +665,94 @@ class ConciergeWidget {
 
   async bookCall() {
     this.trackEvent('booking_clicked', { package: this.recommendPackage() });
-    window.open('https://calendly.com/shortformfactory', '_blank');
     
-    this.addMessage('assistant', "Great choice! I've opened the booking calendar for you. Look for a 15-minute strategy session slot that works for you.");
+    // Check if we have email, if not collect it first
+    if (!this.userAnswers.email) {
+      this.addMessage('assistant', "Perfect! To schedule your strategy call, I just need your email and we'll reach out within 24 hours to find a time that works. What's your best email?");
+      this.conversationState = 'collect_email_for_call';
+      return;
+    }
+    
+    // Submit the booking request
+    await this.submitBookingRequest();
+  }
+
+  async submitBookingRequest() {
+    try {
+      await this.storeLead({
+        type: 'booking_request',
+        leadScore: this.calculateLeadScore(),
+        intentTier: 'hot',
+        recommendedPackage: this.recommendPackage(),
+        userAnswers: this.userAnswers
+      });
+      
+      this.addMessage('assistant', "🎉 Awesome! We've received your request. Our team will email you within 24 hours to schedule your free 15-minute strategy call. Keep an eye on your inbox!");
+      
+      // Also redirect to contact page as backup
+      setTimeout(() => {
+        window.location.href = '/contact?source=concierge&type=booking';
+      }, 2000);
+    } catch (error) {
+      // Fallback to contact page
+      window.location.href = '/contact?source=concierge&type=booking';
+    }
   }
 
   async requestQuote() {
     this.trackEvent('quote_requested', { package: this.recommendPackage() });
     
     // Collect email if not already collected
-    const email = this.userAnswers.email;
-    if (!email) {
+    if (!this.userAnswers.email) {
       this.addMessage('assistant', "I'll prepare a custom quote for you! What's the best email to send it to?");
-      this.conversationState = 'collect_email';
+      this.conversationState = 'collect_email_for_quote';
       return;
     }
     
     await this.submitQuoteRequest();
-    this.addMessage('assistant', "Perfect! I'm preparing your custom quote now. You'll receive it within 24 hours with detailed pricing and deliverables.");
+  }
+
+  async submitQuoteRequest() {
+    try {
+      await this.storeLead({
+        type: 'quote_request',
+        leadScore: this.calculateLeadScore(),
+        intentTier: this.getIntentTier(this.calculateLeadScore()),
+        recommendedPackage: this.recommendPackage(),
+        userAnswers: this.userAnswers
+      });
+      
+      this.addMessage('assistant', "Perfect! I'm preparing your custom quote now. You'll receive it within 24 hours with detailed pricing and deliverables. Check your inbox!");
+    } catch (error) {
+      this.addMessage('assistant', "I'll get that quote ready for you! In the meantime, feel free to check out our pricing page.");
+    }
   }
 
   async sendLeadMagnet() {
     this.trackEvent('lead_magnet_requested');
     
-    const email = this.userAnswers.email;
-    if (!email) {
+    if (!this.userAnswers.email) {
       this.addMessage('assistant', "I'll send you our free content plan template! What's the best email?");
-      this.conversationState = 'collect_email';
+      this.conversationState = 'collect_email_for_template';
       return;
     }
     
     await this.submitLeadMagnetRequest();
-    this.addMessage('assistant', "Great! I've sent the content plan template to your email. It includes our proven framework for creating viral short-form content.");
+  }
+
+  async submitLeadMagnetRequest() {
+    try {
+      await this.storeLead({
+        type: 'lead_magnet',
+        leadScore: this.calculateLeadScore(),
+        intentTier: 'cold',
+        userAnswers: this.userAnswers
+      });
+      
+      this.addMessage('assistant', "Great! I've sent the content plan template to your email. It includes our proven framework for creating viral short-form content. 📧");
+    } catch (error) {
+      this.addMessage('assistant', "Thanks! Check your email for the template.");
+    }
   }
 
   async storeLead(leadData) {
