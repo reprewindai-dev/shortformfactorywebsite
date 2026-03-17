@@ -95,9 +95,44 @@ class ConciergeWidget {
   init() {
     this.createWidget();
     this.setupEventListeners();
+    this.setupCalendlyListener();
     this.queueInstantGreeting();
     this.trackEvent('widget_loaded');
     window.dispatchEvent(new Event('concierge:ready'));
+  }
+
+  setupCalendlyListener() {
+    // Listen for Calendly events via postMessage
+    window.addEventListener('message', (e) => {
+      if (e.origin === 'https://calendly.com' && e.data.event) {
+        if (e.data.event === 'calendly.event_scheduled') {
+          // Booking completed!
+          this.handleCalendlyBooking(e.data.payload);
+        }
+      }
+    });
+  }
+
+  handleCalendlyBooking(payload) {
+    // Show confirmation in chat
+    this.addMessage('assistant', "🎉 Awesome! Your call is booked! You'll receive a confirmation email shortly. Looking forward to chatting with you!");
+    this.addQuickActions(['Tell me more about services', 'See pricing', 'I\'m all set!']);
+    
+    // Track the conversion
+    this.trackEvent('calendly_booking_completed', {
+      eventUri: payload?.event?.uri,
+      inviteeUri: payload?.invitee?.uri
+    });
+
+    // Store lead with booking confirmation
+    this.storeLead({
+      type: 'calendly_booked',
+      leadScore: 100,
+      intentTier: 'hot',
+      recommendedPackage: this.recommendPackage(),
+      userAnswers: this.userAnswers,
+      calendlyEvent: payload?.event?.uri
+    }).catch(() => {});
   }
 
   createWidget() {
@@ -679,33 +714,53 @@ class ConciergeWidget {
   async bookCall() {
     this.trackEvent('booking_clicked', { package: this.recommendPackage() });
     
-    // Check if we have email, if not collect it first
-    if (!this.userAnswers.email) {
-      this.addMessage('assistant', "Perfect! To schedule your strategy call, I just need your email and we'll reach out within 24 hours to find a time that works. What's your best email?");
-      this.conversationState = 'collect_email_for_call';
+    // Open Calendly popup for instant booking
+    this.openCalendlyPopup();
+  }
+
+  openCalendlyPopup() {
+    // Check if Calendly is loaded
+    if (typeof Calendly === 'undefined') {
+      this.addMessage('assistant', "Let me open our scheduling page for you...");
+      window.open('https://calendly.com/shortformfactory-help', '_blank');
       return;
     }
-    
-    // Submit the booking request
-    await this.submitBookingRequest();
+
+    this.addMessage('assistant', "📅 Opening our calendar - pick a time that works for you!");
+
+    // Prefill data if we have it
+    const prefill = {};
+    if (this.userAnswers.email) {
+      prefill.email = this.userAnswers.email;
+    }
+    if (this.userAnswers.name) {
+      prefill.name = this.userAnswers.name;
+    }
+
+    // Open Calendly popup
+    Calendly.initPopupWidget({
+      url: 'https://calendly.com/shortformfactory-help?hide_gdpr_banner=1&primary_color=c6ff40',
+      prefill: prefill,
+      utm: {
+        utmSource: 'concierge_widget',
+        utmMedium: 'chat',
+        utmCampaign: 'booking'
+      }
+    });
+
+    // Store lead data
+    this.storeLead({
+      type: 'calendly_opened',
+      leadScore: this.calculateLeadScore(),
+      intentTier: 'hot',
+      recommendedPackage: this.recommendPackage(),
+      userAnswers: this.userAnswers
+    }).catch(() => {});
   }
 
   async submitBookingRequest() {
-    try {
-      await this.storeLead({
-        type: 'booking_request',
-        leadScore: this.calculateLeadScore(),
-        intentTier: 'hot',
-        recommendedPackage: this.recommendPackage(),
-        userAnswers: this.userAnswers
-      });
-      
-      this.addMessage('assistant', "🎉 Perfect! I've got your info. Our team will reach out within 24 hours to schedule your free strategy call. In the meantime, is there anything else you'd like to know about our services?");
-      this.addQuickActions(['Tell me about pricing', 'How does it work?', 'I\'m good for now']);
-    } catch (error) {
-      this.addMessage('assistant', "Thanks! We'll be in touch soon to schedule your call. Anything else I can help with?");
-      this.addQuickActions(['Tell me about pricing', 'How does it work?']);
-    }
+    // Legacy fallback - now handled by Calendly
+    this.openCalendlyPopup();
   }
 
   async requestQuote() {
