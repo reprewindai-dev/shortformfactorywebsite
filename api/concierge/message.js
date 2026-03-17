@@ -163,7 +163,7 @@ const KNOWLEDGE_BASE = {
     }
   },
 
-  // Add-ons
+  // Add-ons (all prices in USD)
   addons: [
     { name: 'Rush Delivery', price: 25 },
     { name: 'Extra Clip', price: 15 },
@@ -171,7 +171,9 @@ const KNOWLEDGE_BASE = {
     { name: 'Premium Captions Upgrade', price: 15 },
     { name: 'Color Grade Enhancement', price: 20 },
     { name: 'Advanced Effects Pack', price: 25 },
-    { name: 'Thumbnail Pack (3 designs)', price: 20 }
+    { name: 'Thumbnail Pack (3 designs)', price: 20 },
+    { name: 'Music Licensing Support', price: 10 },
+    { name: 'Source File Delivery', price: 15 }
   ],
 
   // Revision policy
