@@ -722,7 +722,7 @@ class ConciergeWidget {
     // Check if Calendly is loaded
     if (typeof Calendly === 'undefined') {
       this.addMessage('assistant', "Let me open our scheduling page for you...");
-      window.open('https://calendly.com/shortformfactory-help', '_blank');
+      window.open('https://calendly.com/shortformfactory/30min', '_blank');
       return;
     }
 
@@ -737,9 +737,9 @@ class ConciergeWidget {
       prefill.name = this.userAnswers.name;
     }
 
-    // Open Calendly popup
+    // Open Calendly popup with brand styling
     Calendly.initPopupWidget({
-      url: 'https://calendly.com/shortformfactory-help?hide_gdpr_banner=1&primary_color=c6ff40',
+      url: 'https://calendly.com/shortformfactory/30min?hide_event_type_details=1&hide_gdpr_banner=1&background_color=1b1818&text_color=68eb3d&primary_color=020202',
       prefill: prefill,
       utm: {
         utmSource: 'concierge_widget',
