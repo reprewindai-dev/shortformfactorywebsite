@@ -617,13 +617,21 @@ class ConciergeWidget {
   }
 
   addQuickActions(actions) {
-    const quickActionsHTML = actions.map(action => 
-      `<button class="concierge-quick-action" onclick="window.concierge.selectQuickAction('${action}')">${action}</button>`
-    ).join('');
-    
     const container = document.createElement('div');
     container.className = 'concierge-quick-actions';
-    container.innerHTML = quickActionsHTML;
+    
+    actions.forEach(action => {
+      const button = document.createElement('button');
+      button.className = 'concierge-quick-action';
+      button.textContent = action;
+      button.setAttribute('data-action', action);
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.selectQuickAction(action);
+      });
+      container.appendChild(button);
+    });
     
     const messagesContainer = document.getElementById('conciergeMessages');
     messagesContainer.appendChild(container);
@@ -637,6 +645,11 @@ class ConciergeWidget {
   }
 
   selectQuickAction(action) {
+    // Remove the quick actions container after selection
+    const quickActionsContainers = document.querySelectorAll('.concierge-quick-actions');
+    quickActionsContainers.forEach(container => container.remove());
+    
+    // Set the input and send
     const input = document.getElementById('conciergeInput');
     input.value = action;
     this.sendMessage();
