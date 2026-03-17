@@ -687,15 +687,11 @@ class ConciergeWidget {
         userAnswers: this.userAnswers
       });
       
-      this.addMessage('assistant', "🎉 Awesome! We've received your request. Our team will email you within 24 hours to schedule your free 15-minute strategy call. Keep an eye on your inbox!");
-      
-      // Also redirect to contact page as backup
-      setTimeout(() => {
-        window.location.href = '/contact?source=concierge&type=booking';
-      }, 2000);
+      this.addMessage('assistant', "🎉 Perfect! I've got your info. Our team will reach out within 24 hours to schedule your free strategy call. In the meantime, is there anything else you'd like to know about our services?");
+      this.addQuickActions(['Tell me about pricing', 'How does it work?', 'I\'m good for now']);
     } catch (error) {
-      // Fallback to contact page
-      window.location.href = '/contact?source=concierge&type=booking';
+      this.addMessage('assistant', "Thanks! We'll be in touch soon to schedule your call. Anything else I can help with?");
+      this.addQuickActions(['Tell me about pricing', 'How does it work?']);
     }
   }
 
@@ -722,9 +718,13 @@ class ConciergeWidget {
         userAnswers: this.userAnswers
       });
       
-      this.addMessage('assistant', "Perfect! I'm preparing your custom quote now. You'll receive it within 24 hours with detailed pricing and deliverables. Check your inbox!");
+      const pkg = this.recommendPackage();
+      const pkgName = pkg.charAt(0).toUpperCase() + pkg.slice(1);
+      this.addMessage('assistant', `📧 Done! I'm sending your custom ${pkgName} package quote to ${this.userAnswers.email}. You'll have it within 24 hours. While you wait, any questions about how we work?`);
+      this.addQuickActions(['How fast is delivery?', 'What\'s included?', 'I\'m all set!']);
     } catch (error) {
-      this.addMessage('assistant', "I'll get that quote ready for you! In the meantime, feel free to check out our pricing page.");
+      this.addMessage('assistant', "I'll get that quote ready for you! Any other questions in the meantime?");
+      this.addQuickActions(['How fast is delivery?', 'What\'s included?']);
     }
   }
 
@@ -749,9 +749,11 @@ class ConciergeWidget {
         userAnswers: this.userAnswers
       });
       
-      this.addMessage('assistant', "Great! I've sent the content plan template to your email. It includes our proven framework for creating viral short-form content. 📧");
+      this.addMessage('assistant', `📧 Done! I just sent our viral content planning template to ${this.userAnswers.email}. It's the same framework our clients use to 3x their engagement. Once you've had a chance to review it, I'd love to help you put it into action!`);
+      this.addQuickActions(['Tell me about packages', 'How much does it cost?', 'Thanks, I\'ll check it out']);
     } catch (error) {
-      this.addMessage('assistant', "Thanks! Check your email for the template.");
+      this.addMessage('assistant', "The template is on its way! Let me know if you have any questions.");
+      this.addQuickActions(['Tell me about packages', 'How much does it cost?']);
     }
   }
 
