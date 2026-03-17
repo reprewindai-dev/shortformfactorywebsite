@@ -366,15 +366,15 @@ function handlePricingQuestion(message, answers, leadScore, intentTier) {
     }
   }
 
-  // General pricing overview
+  // General pricing overview - show individual services first for accessibility
   return {
-    message: `Here's our pricing:\n\n**Monthly Packages:**\n• Starter: $1,500/mo (5 clips/week)\n• Growth: $3,500/mo (15 clips/week) - Most Popular\n• Scale: $7,500/mo (30+ clips/week)\n\n**Individual Services:** Start at $15-40 per video depending on the service.\n\nWhat volume of content are you looking to produce?`,
+    message: `Here's our pricing:\n\n**Individual Services (per video):**\n• Auto Captions: $15-75\n• Viral Captions: $20-110\n• AI Reel Edit: $25-140\n• Social Media Edit: $30-160\n• Podcast Repurpose: $40-220\n• Background Removal: $25-150\n• Audio Sync: $15-95\n• Smart Cut: $20-120\n\n**Monthly Packages (for regular content):**\n• Starter: $1,500/mo (5 clips/week)\n• Growth: $3,500/mo (15 clips/week)\n• Scale: $7,500/mo (30+ clips/week)\n\nAre you looking for a one-time project or ongoing content?`,
     lead_score: leadScore,
     intent_tier: intentTier,
     recommended_package: recommendPackage(answers),
     recommended_next_step: 'continue_conversation',
     qualification_data: answers,
-    quick_actions: ['5-10 clips/week', '15-20 clips/week', '30+ clips/week', 'Just a few videos']
+    quick_actions: ['Just one video', 'A few videos', 'Ongoing weekly content', 'Tell me more about packages']
   };
 }
 
