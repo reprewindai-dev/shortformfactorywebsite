@@ -263,16 +263,23 @@ class ConciergeWidget {
       const response = await this.callAI(message);
       this.hideTyping();
       
-      if (response.responseType === 'question') {
-        this.addMessage('assistant', response.message);
-        if (response.quickActions) {
-          this.addQuickActions(response.quickActions);
-        }
-      } else if (response.responseType === 'recommendation') {
-        this.showRecommendation(response);
-      } else if (response.responseType === 'objection') {
-        this.handleObjection(response);
+      // Add the AI message
+      this.addMessage('assistant', response.message);
+      
+      // Handle based on response type and next step
+      if (response.responseType === 'recommendation' && response.recommendedNextStep !== 'continue_conversation') {
+        // Show CTA card for recommendations
+        this.showCTACard(response.recommendedNextStep, response.recommendedPackage || 'growth');
+      } else if (response.quickActions && response.quickActions.length > 0) {
+        // Show quick action buttons for easier responses
+        this.addQuickActions(response.quickActions);
       }
+      
+      // Track lead score changes
+      if (response.leadScore >= 70) {
+        this.trackEvent('hot_lead_detected', { score: response.leadScore });
+      }
+      
     } catch (error) {
       this.hideTyping();
       this.addMessage('assistant', "I'm having trouble connecting. Let me help you directly. Based on what you've shared, I recommend booking a call to discuss your specific needs.");
@@ -281,13 +288,17 @@ class ConciergeWidget {
   }
 
   async callAI(message) {
-    const context = {
+    // Build conversation history for context
+    const conversationHistory = this.getConversationHistory();
+    
+    const payload = {
+      message: message,
       sessionId: this.sessionId,
       conversationState: this.conversationState,
       currentQuestion: this.currentQuestion,
       userAnswers: this.userAnswers,
       questions: this.questions,
-      message: message
+      conversationHistory: conversationHistory
     };
 
     try {
@@ -296,18 +307,64 @@ class ConciergeWidget {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(context)
+        body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
         throw new Error('API call failed');
       }
 
-      return await response.json();
+      const data = await response.json();
+      
+      // Update qualification data from response
+      if (data.qualification_data) {
+        this.userAnswers = { ...this.userAnswers, ...data.qualification_data };
+      }
+      
+      // Map response to widget format
+      return this.mapResponse(data);
     } catch (error) {
-      // Fallback to rule-based logic
+      console.error('Concierge API failed:', error);
       return this.fallbackLogic(message);
     }
+  }
+
+  getConversationHistory() {
+    const messages = document.querySelectorAll('.concierge-message');
+    const history = [];
+    
+    messages.forEach(msg => {
+      const bubble = msg.querySelector('.concierge-bubble');
+      if (bubble) {
+        const role = msg.classList.contains('assistant') ? 'assistant' : 'user';
+        history.push({ role, content: bubble.textContent });
+      }
+    });
+    
+    return history.slice(-10);
+  }
+
+  mapResponse(data) {
+    // Determine response type based on recommendation
+    let responseType = 'question';
+    
+    if (data.recommended_next_step === 'book_call' || 
+        data.recommended_next_step === 'request_quote' || 
+        data.recommended_next_step === 'lead_magnet') {
+      if (data.lead_score >= 50) {
+        responseType = 'recommendation';
+      }
+    }
+    
+    return {
+      responseType: responseType,
+      message: data.message,
+      leadScore: data.lead_score,
+      intentTier: data.intent_tier,
+      recommendedPackage: data.recommended_package,
+      recommendedNextStep: data.recommended_next_step,
+      quickActions: data.quick_actions || []
+    };
   }
 
   fallbackLogic(message) {
