@@ -447,16 +447,16 @@ class ConciergeWidget {
   generateRecommendation() {
     const score = this.calculateLeadScore();
     const tier = this.getIntentTier(score);
-    const package = this.recommendPackage();
+    const pkg = this.recommendPackage();
     const nextStep = this.getNextStep(tier);
     
     return {
       responseType: 'recommendation',
       leadScore: score,
       intentTier: tier,
-      recommendedPackage: package,
+      recommendedPackage: pkg,
       recommendedNextStep: nextStep,
-      message: this.getRecommendationMessage(tier, package, nextStep)
+      message: this.getRecommendationMessage(tier, pkg, nextStep)
     };
   }
 
@@ -515,7 +515,7 @@ class ConciergeWidget {
     return 'lead_magnet';
   }
 
-  getRecommendationMessage(tier, package, nextStep) {
+  getRecommendationMessage(tier, pkg, nextStep) {
     const messages = {
       hot: {
         book_call: "Perfect! Based on your answers, you're exactly who we help get results. I recommend our Growth package to start. Let's book a 15-minute call to finalize your content strategy.",
