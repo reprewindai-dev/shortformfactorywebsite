@@ -9,7 +9,7 @@
 
 .concierge-widget {
   position: fixed;
-  bottom: 20px;
+  bottom: calc(20px + var(--concierge-offset-bottom, 0px));
   right: 20px;
   z-index: 9999;
   font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -59,7 +59,7 @@
 
 .concierge-window {
   position: absolute;
-  bottom: 80px;
+  bottom: calc(80px + var(--concierge-offset-bottom, 0px));
   right: 0;
   width: 380px;
   height: 600px;
@@ -427,7 +427,7 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
   .concierge-widget {
-    bottom: 10px;
+    bottom: calc(10px + var(--concierge-offset-bottom, 0px));
     right: 10px;
     left: 10px;
   }
@@ -448,7 +448,7 @@
     max-height: calc(100dvh - 80px); /* Dynamic viewport for mobile browsers */
     right: 10px;
     left: 10px;
-    bottom: 76px;
+    bottom: calc(76px + var(--concierge-offset-bottom, 0px));
     border-radius: 12px;
   }
   

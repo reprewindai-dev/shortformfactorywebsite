@@ -2,87 +2,115 @@
 (function() {
   'use strict';
 
-  // Check if consent has already been given
-  const consentGiven = localStorage.getItem('cookieConsent');
-  
-  if (consentGiven === null) {
-    // No consent decision yet - show banner
-    showConsentBanner();
-  } else if (consentGiven === 'accepted') {
-    // Consent was given - grant analytics
+  const CONSENT_KEY = 'cookieConsent';
+  let bannerEl = null;
+  let resizeHandler = null;
+
+  const consentGiven = localStorage.getItem(CONSENT_KEY);
+  const shouldShowBanner = consentGiven !== 'accepted';
+
+  if (!shouldShowBanner) {
     grantConsent();
+    updateBannerVisibility(false);
   } else {
-    // Consent was denied - deny analytics
-    denyConsent();
+    if (consentGiven === 'declined') {
+      denyConsent();
+    }
+    showConsentBanner();
   }
 
+  window.SFFCookieConsent = {
+    reset() {
+      localStorage.removeItem(CONSENT_KEY);
+      denyConsent();
+      showConsentBanner();
+    }
+  };
+
   function showConsentBanner() {
-    // Create banner HTML
-    const banner = document.createElement('div');
-    banner.id = 'cookie-consent-banner';
-    banner.innerHTML = `
+    if (bannerEl) return;
+
+    bannerEl = document.createElement('div');
+    bannerEl.id = 'cookie-consent-banner';
+    bannerEl.setAttribute('role', 'dialog');
+    bannerEl.setAttribute('aria-live', 'polite');
+    bannerEl.setAttribute('aria-label', 'Cookie consent banner');
+    bannerEl.innerHTML = `
       <div class="cookie-consent-content">
         <p class="cookie-consent-text">
-          We use cookies to analyze site traffic and improve your experience. 
+          We use cookies to analyze site traffic and improve your experience.
           <a href="/privacy" class="cookie-consent-link">Privacy Policy</a>
         </p>
-        <div class="cookie-consent-buttons">
-          <button id="cookie-accept" class="cookie-btn cookie-btn-accept">Accept</button>
-          <button id="cookie-decline" class="cookie-btn cookie-btn-decline">Decline</button>
+        <div class="cookie-consent-buttons" role="group" aria-label="Cookie consent options">
+          <button type="button" id="cookie-accept" class="cookie-btn cookie-btn-accept">Accept</button>
+          <button type="button" id="cookie-decline" class="cookie-btn cookie-btn-decline">Decline</button>
         </div>
       </div>
     `;
-    
-    document.body.appendChild(banner);
 
-    // Add event listeners
-    document.getElementById('cookie-accept').addEventListener('click', function() {
-      acceptCookies();
-    });
+    document.body.appendChild(bannerEl);
+    requestAnimationFrame(() => updateBannerVisibility(true));
 
-    document.getElementById('cookie-decline').addEventListener('click', function() {
-      declineCookies();
-    });
+    resizeHandler = () => updateBannerVisibility(true);
+    window.addEventListener('resize', resizeHandler, { passive: true });
+
+    bannerEl.querySelector('#cookie-accept').addEventListener('click', acceptCookies);
+    bannerEl.querySelector('#cookie-decline').addEventListener('click', declineCookies);
   }
 
   function acceptCookies() {
-    localStorage.setItem('cookieConsent', 'accepted');
+    localStorage.setItem(CONSENT_KEY, 'accepted');
     grantConsent();
     hideBanner();
   }
 
   function declineCookies() {
-    localStorage.setItem('cookieConsent', 'declined');
+    localStorage.setItem(CONSENT_KEY, 'declined');
     denyConsent();
     hideBanner();
   }
 
   function hideBanner() {
-    const banner = document.getElementById('cookie-consent-banner');
-    if (banner) {
-      banner.style.opacity = '0';
-      setTimeout(function() {
-        banner.remove();
-      }, 300);
+    if (!bannerEl) {
+      updateBannerVisibility(false);
+      return;
+    }
+
+    bannerEl.style.opacity = '0';
+    const bannerToRemove = bannerEl;
+    bannerEl = null;
+    setTimeout(() => {
+      bannerToRemove.remove();
+      updateBannerVisibility(false);
+    }, 300);
+
+    if (resizeHandler) {
+      window.removeEventListener('resize', resizeHandler);
+      resizeHandler = null;
     }
   }
 
+  function updateBannerVisibility(visible) {
+    const height = visible && bannerEl ? bannerEl.offsetHeight : 0;
+    const detail = { visible, height };
+    window.__cookieConsentVisibility = detail;
+    window.dispatchEvent(new CustomEvent('cookie-consent:visibility', { detail }));
+  }
+
   function grantConsent() {
-    // Update Google Analytics consent mode
     if (typeof gtag === 'function') {
       gtag('consent', 'update', {
-        'analytics_storage': 'granted',
-        'ad_storage': 'granted'
+        analytics_storage: 'granted',
+        ad_storage: 'granted'
       });
     }
   }
 
   function denyConsent() {
-    // Update Google Analytics consent mode
     if (typeof gtag === 'function') {
       gtag('consent', 'update', {
-        'analytics_storage': 'denied',
-        'ad_storage': 'denied'
+        analytics_storage: 'denied',
+        ad_storage: 'denied'
       });
     }
   }

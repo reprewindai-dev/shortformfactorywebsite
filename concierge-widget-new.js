@@ -1,7 +1,43 @@
 // Enhanced Concierge Widget - Production Version
 (function() {
   'use strict';
-  
+
+const SESSION_FLAG_KEY = 'sffConciergeSessionOpened';
+const MOBILE_PROMPT_KEY = 'sffConciergeMobilePromptHidden';
+
+function getSafeSessionStorage() {
+  try {
+    const testKey = '__concierge_session_test__';
+    window.sessionStorage.setItem(testKey, '1');
+    window.sessionStorage.removeItem(testKey);
+    return window.sessionStorage;
+  } catch (error) {
+    console.warn('Session storage unavailable for concierge state persistence.', error);
+    return null;
+  }
+}
+
+const sessionStore = getSafeSessionStorage();
+
+function readSessionFlag(key) {
+  if (!sessionStore) return null;
+  try {
+    return sessionStore.getItem(key);
+  } catch (error) {
+    console.warn('Failed to read concierge session flag', error);
+    return null;
+  }
+}
+
+function writeSessionFlag(key, value) {
+  if (!sessionStore) return;
+  try {
+    sessionStore.setItem(key, value);
+  } catch (error) {
+    console.warn('Failed to persist concierge session flag', error);
+  }
+}
+
 class ConciergeWidget {
   constructor() {
     this.isOpen = false;
@@ -10,6 +46,22 @@ class ConciergeWidget {
     this.userAnswers = {};
     this.currentQuestion = 0;
     this.hasProactivelyOpened = false;
+    this.isMobileQuery = window.matchMedia('(max-width: 768px)');
+    this.isMobileViewport = this.isMobileQuery.matches;
+    this.sessionHasOpened = readSessionFlag(SESSION_FLAG_KEY) === 'true';
+    this.mobilePromptDismissed = readSessionFlag(MOBILE_PROMPT_KEY) === 'true';
+    const initialConsentState = window.__cookieConsentVisibility || null;
+    this.cookieBannerOffset = initialConsentState?.visible ? (initialConsentState.height || 0) : 0;
+    this.mobilePromptEl = null;
+    this.handleViewportChange = (event) => {
+      this.isMobileViewport = event.matches;
+      if (this.isMobileViewport) {
+        this.renderMobilePromptIfNeeded();
+      } else {
+        this.dismissMobilePrompt();
+      }
+    };
+    this.isMobileQuery.addEventListener('change', this.handleViewportChange);
     
     this.questions = [
       {
@@ -88,15 +140,39 @@ class ConciergeWidget {
     this.init();
   }
 
+  bindGlobalEvents() {
+    window.addEventListener('cookie-consent:visibility', (event) => {
+      const { visible, height } = event.detail || {};
+      this.cookieBannerOffset = visible ? (height || 0) : 0;
+      this.updateFloatingOffsets();
+    });
+  }
+
+  updateFloatingOffsets() {
+    const offsetValue = `${this.cookieBannerOffset}px`;
+    const widget = document.getElementById('conciergeWidget');
+    if (widget) {
+      widget.style.setProperty('--concierge-offset-bottom', offsetValue);
+    }
+    if (this.mobilePromptEl) {
+      this.mobilePromptEl.style.setProperty('--concierge-offset-bottom', offsetValue);
+    }
+  }
+
   generateSessionId() {
     return 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   }
 
   init() {
     this.createWidget();
+    this.updateFloatingOffsets();
+    this.bindGlobalEvents();
     this.setupEventListeners();
     this.setupCalendlyListener();
-    this.queueInstantGreeting();
+    this.renderMobilePromptIfNeeded();
+    if (!this.sessionHasOpened) {
+      this.queueInstantGreeting();
+    }
     this.trackEvent('widget_loaded');
     window.dispatchEvent(new Event('concierge:ready'));
   }
@@ -208,6 +284,9 @@ class ConciergeWidget {
 
   queueInstantGreeting() {
     setTimeout(() => {
+      if (this.isMobileViewport) {
+        return;
+      }
       if (!this.hasProactivelyOpened && !this.isOpen) {
         this.proactiveOpen('instant_load');
       }
@@ -215,7 +294,12 @@ class ConciergeWidget {
   }
 
   proactiveOpen(trigger) {
+    if (trigger === 'instant_load' && this.sessionHasOpened) {
+      return;
+    }
     this.hasProactivelyOpened = true;
+    this.sessionHasOpened = true;
+    writeSessionFlag(SESSION_FLAG_KEY, 'true');
     this.open();
     
     const greetingVariants = [
@@ -246,8 +330,17 @@ class ConciergeWidget {
     const toggle = document.getElementById('conciergeToggle');
     
     this.isOpen = true;
+    if (!this.sessionHasOpened) {
+      this.sessionHasOpened = true;
+      writeSessionFlag(SESSION_FLAG_KEY, 'true');
+    }
+    if (!this.mobilePromptDismissed) {
+      this.mobilePromptDismissed = true;
+      writeSessionFlag(MOBILE_PROMPT_KEY, 'true');
+    }
     window.classList.add('open');
     toggle.classList.remove('pulse');
+    this.dismissMobilePrompt();
     
     if (this.conversationState === 'greeting') {
       this.addMessage('assistant', "Hey! I'm the ShortFormFactory concierge. I can help you create a high-performing short-form content plan in 60 seconds. What are you trying to accomplish right now?");
@@ -688,6 +781,50 @@ class ConciergeWidget {
     const input = document.getElementById('conciergeInput');
     input.value = action;
     this.sendMessage();
+  }
+
+  renderMobilePromptIfNeeded() {
+    if (!this.isMobileViewport || this.mobilePromptDismissed || this.sessionHasOpened || this.isOpen) {
+      this.dismissMobilePrompt();
+      return;
+    }
+
+    if (this.mobilePromptEl) {
+      return;
+    }
+
+    const prompt = document.createElement('div');
+    prompt.className = 'concierge-mobile-prompt';
+    prompt.innerHTML = `
+      <button type="button" class="concierge-mobile-dismiss" aria-label="Close concierge intro">×</button>
+      <div class="concierge-mobile-copy">
+        <span class="label">Concierge</span>
+        <p>Tap to get a revenue-ready content plan in under a minute.</p>
+      </div>
+      <button type="button" class="concierge-mobile-cta">Open</button>
+    `;
+
+    prompt.querySelector('.concierge-mobile-dismiss').addEventListener('click', () => {
+      this.mobilePromptDismissed = true;
+      writeSessionFlag(MOBILE_PROMPT_KEY, 'true');
+      this.dismissMobilePrompt();
+    });
+
+    prompt.querySelector('.concierge-mobile-cta').addEventListener('click', () => {
+      this.dismissMobilePrompt();
+      this.open();
+    });
+
+    document.body.appendChild(prompt);
+    this.mobilePromptEl = prompt;
+    this.updateFloatingOffsets();
+  }
+
+  dismissMobilePrompt() {
+    if (this.mobilePromptEl) {
+      this.mobilePromptEl.remove();
+      this.mobilePromptEl = null;
+    }
   }
 
   showTyping() {
