@@ -80,12 +80,10 @@
         <span></span>
       </button>
       <nav class="nav" id="mainNav">
-        <a href="/" class="nav-link">Home</a>
         <a href="/services" class="nav-link">Services</a>
-        <a href="/demo" class="nav-link">Demo</a>
-        <a href="/blog" class="nav-link">Blog</a>
         <a href="/order" class="nav-link">Order</a>
         <a href="/contact" class="nav-link">Contact</a>
+        <a href="/demo" class="nav-link">Demo</a>
       </nav>
     </div>
   </header>
@@ -130,58 +128,168 @@
     </div>
   </section>
 
-  <section class="caption-demo" id="caption-demo">
+  <section class="demo-section" id="caption-demo">
     <div class="section-header">
-      <h2 class="section-title">Try our viral captions</h2>
-      <p class="section-subtitle">Animated, word-by-word captions that keep viewers watching 3× longer</p>
+      <h2 class="section-title">Live captions demo</h2>
+      <p class="section-subtitle">Switch presets, toggle creative layers, and see ROI from one long-form asset.</p>
     </div>
-    <div class="caption-demo-grid">
-      <div class="caption-showcase">
-        <div class="caption-frame">
-          <span class="caption-badge">Live preview</span>
-          <div class="caption-video">
-            <div class="caption-wave"></div>
-            <div class="caption-lines">
-              <span class="caption-line active">“Here’s the exact hook we use to triple watch time.”</span>
-              <span class="caption-line">“Layer motion elements so every beat lands.”</span>
-              <span class="caption-line">“Deliver the CTA before attention drops.”</span>
-            </div>
+    <div class="demo-grid">
+      <div class="roi-calculator">
+        <h3>ROI calculator</h3>
+        <p>Estimate your return with professional editing + distribution-ready clips.</p>
+
+        <div class="form-group">
+          <label class="form-label" for="currentVideos">Current monthly videos</label>
+          <input type="number" id="currentVideos" class="form-input" placeholder="10" value="10">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="avgViews">Average views per video</label>
+          <input type="number" id="avgViews" class="form-input" placeholder="1000" value="1000">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="conversionRate">Conversion rate (%)</label>
+          <input type="number" id="conversionRate" class="form-input" placeholder="2" value="2" step="0.1">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="avgOrderValue">Average order value ($)</label>
+          <input type="number" id="avgOrderValue" class="form-input" placeholder="100" value="100">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="servicePackage">Service package</label>
+          <select id="servicePackage" class="form-input">
+            <option value="basic">Basic package - $25/video</option>
+            <option value="standard">Standard package - $60/video</option>
+            <option value="premium">Premium package - $140/video</option>
+          </select>
+        </div>
+
+        <button class="demo-btn" id="calculateROI">Calculate ROI</button>
+
+        <div id="roiResults" class="roi-results">
+          <h4>Your potential results</h4>
+          <div class="roi-metric">
+            <span>Current monthly revenue</span>
+            <span class="roi-value" id="currentRevenue">$0</span>
+          </div>
+          <div class="roi-metric">
+            <span>Projected monthly revenue</span>
+            <span class="roi-value" id="projectedRevenue">$0</span>
+          </div>
+          <div class="roi-metric">
+            <span>Monthly investment</span>
+            <span class="roi-value" id="monthlyInvestment">$0</span>
+          </div>
+          <div class="roi-metric">
+            <span>Net profit</span>
+            <span class="roi-value" id="netProfit">$0</span>
+          </div>
+          <div class="roi-metric">
+            <span>ROI</span>
+            <span class="roi-value" id="roiPercentage">0%</span>
           </div>
         </div>
       </div>
-      <div class="caption-details">
-        <div>
-          <h3>What’s included</h3>
-          <ul class="caption-benefits">
-            <li>Word-by-word animation synced to dialogue</li>
-            <li>Brand fonts, color blocking, and emoji strategy</li>
-            <li>Auto-baked subtitles for TikTok, Reels, Shorts</li>
-            <li>Delivery within 24 hours</li>
-          </ul>
+
+      <div class="live-demo">
+        <div class="demo-headline">
+          <div>
+            <h3>Viral captions preview</h3>
+            <p>Adjust presets, toggles, and watch the canvas respond in real time.</p>
+          </div>
+          <div class="demo-status"><span></span>Realtime render • 24 FPS</div>
         </div>
-        <div>
-          <h4>Per-clip pricing</h4>
-          <div class="caption-tier-grid">
-            <div class="caption-tier">
-              <span class="tier-label">Basic</span>
-              <strong>$20</strong>
-              <p>Clean burn-in captions</p>
-            </div>
-            <div class="caption-tier">
-              <span class="tier-label">Standard</span>
-              <strong>$50</strong>
-              <p>Animated words + emphasis layers</p>
-            </div>
-            <div class="caption-tier">
-              <span class="tier-label">Premium</span>
-              <strong>$110</strong>
-              <p>Full motion kit + custom emoji design</p>
+
+        <div class="demo-player">
+          <div class="demo-preview">
+            <canvas id="demoCanvas" width="640" height="360" aria-label="Viral captions sample render"></canvas>
+            <div class="demo-caption-overlay">
+              <div class="demo-caption-bubble" id="captionPrimary">CAPTION STREAM LOADING</div>
+              <div class="demo-caption-bubble accent" id="captionAccent">HOLD TIGHT...</div>
             </div>
           </div>
+          <div class="demo-progress" id="demoProgress" data-timestamp="00:00 / 00:24">
+            <span></span>
+          </div>
         </div>
-        <div class="caption-cta-row">
-          <a href="/order?service=viralCaptions" class="btn btn-primary">Book caption demo</a>
-          <a href="/demo" class="btn btn-secondary">See full demo</a>
+
+        <div class="demo-controls">
+          <div>
+            <div class="demo-highlight">Preset library</div>
+            <div class="demo-presets" id="demoPresets">
+              <button class="demo-preset-btn active" data-preset="creator">
+                <strong>Creator mode</strong>
+                <span>Bold neon captions</span>
+                <small>Optimized for TikTok/Reels</small>
+              </button>
+              <button class="demo-preset-btn" data-preset="coach">
+                <strong>Coach mode</strong>
+                <span>High-trust gradient blocks</span>
+                <small>Built for webinars & shorts</small>
+              </button>
+              <button class="demo-preset-btn" data-preset="agency">
+                <strong>Agency mode</strong>
+                <span>Editorial split screen</span>
+                <small>Pairs with paid social</small>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div class="demo-highlight">Toggles</div>
+            <div class="demo-toggles">
+              <label class="demo-toggle">
+                <input type="checkbox" id="toggleCaptions" checked>
+                Animate captions
+              </label>
+              <label class="demo-toggle">
+                <input type="checkbox" id="toggleBroll" checked>
+                B-roll overlays
+              </label>
+              <label class="demo-toggle">
+                <input type="checkbox" id="toggleColor">
+                Color lift
+              </label>
+              <label class="demo-toggle">
+                <input type="checkbox" id="toggleStickers" checked>
+                CTA stickers
+              </label>
+            </div>
+          </div>
+
+          <div class="demo-metrics" id="demoMetrics">
+            <div class="demo-metric">
+              <label>Average retention</label>
+              <strong>72%</strong>
+              <span>↑ +38 pts vs raw</span>
+            </div>
+            <div class="demo-metric">
+              <label>Tap-through rate</label>
+              <strong>11.4%</strong>
+              <span>with CTA sticker</span>
+            </div>
+            <div class="demo-metric">
+              <label>Caption speed</label>
+              <strong>128wpm</strong>
+              <span>auto-calibrated</span>
+            </div>
+            <div class="demo-metric">
+              <label>Output ETA</label>
+              <strong>5 hrs</strong>
+              <span>per batch of 10</span>
+            </div>
+          </div>
+
+          <div class="demo-actions">
+            <button class="demo-btn secondary" id="demoReplay">Replay demo</button>
+            <div class="demo-cta-row">
+              <a href="/order?service=viralCaptions" class="btn btn-primary">Order viral captions</a>
+              <button class="btn btn-secondary" type="button" onclick="window.openConcierge && window.openConcierge()">Chat with a producer</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -396,6 +504,7 @@
   <canvas id="particleCanvas"></canvas>
   <script src="/main.js" defer></script>
   <script src="/concierge-widget-new.js" defer></script>
+  <script src="/demo-section.js" defer></script>
   <!-- Calendly Widget Script -->
   <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 </body>
