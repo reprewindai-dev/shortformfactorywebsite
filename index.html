@@ -67,7 +67,16 @@
 </head>
 <body class="home">
   <div class="bg-grid"></div>
-  
+
+  <div class="announce-bar" id="announceBar">
+    <div class="announce-inner">
+      <span class="announce-dot"></span>
+      <span class="announce-text"><strong>New:</strong> ShortFormFactory OS is live &mdash; The all-in-one platform for video editors &amp; agencies.</span>
+      <a href="https://shortformfactory.shop" class="announce-cta" target="_blank" rel="noopener">Explore SFFOS &rarr;</a>
+      <button class="announce-close" id="announceClose" aria-label="Dismiss">&times;</button>
+    </div>
+  </div>
+
   <header class="header" id="header">
     <div class="header-content">
       <a href="/" class="logo">
@@ -101,6 +110,10 @@
           <a href="#how-it-works" class="btn btn-secondary">See How It Works</a>
         </div>
         <p class="hero-trust">Flat-rate. No contracts. North America focused.</p>
+        <a href="https://shortformfactory.shop" class="hero-sffos-pill" target="_blank" rel="noopener">
+          <span class="hero-sffos-pill-label">For video editors &amp; agencies</span>
+          <span class="hero-sffos-pill-cta">Run your business on SFFOS &rarr;</span>
+        </a>
       </div>
       <div class="hero-visual">
         <div class="source-card">
@@ -366,6 +379,26 @@
     </div>
   </section>
 
+  <section class="editor-bridge" id="editor-bridge">
+    <div class="editor-bridge-card">
+      <div class="editor-bridge-left">
+        <p class="section-eyebrow">For video editors &amp; agency operators</p>
+        <h2>This is how we run ShortFormFactory.<br>Now you can run your clients the same way.</h2>
+        <p>SFFOS is the operating system we built to manage leads, proposals, client delivery, and revenue &mdash; all in one place. If you&rsquo;re a freelance editor or running a video agency, it&rsquo;s now yours.</p>
+        <div class="editor-bridge-ctas">
+          <a href="https://shortformfactory.shop" class="btn btn-primary" target="_blank" rel="noopener">Start free on SFFOS</a>
+          <a href="#sffos" class="btn btn-secondary">See what&rsquo;s included</a>
+        </div>
+      </div>
+      <div class="editor-bridge-right">
+        <div class="editor-bridge-stat"><strong>40%</strong><span>avg. revenue increase</span></div>
+        <div class="editor-bridge-stat"><strong>60%</strong><span>less admin time</span></div>
+        <div class="editor-bridge-stat"><strong>15&rarr;1</strong><span>tools replaced</span></div>
+        <div class="editor-bridge-stat"><strong>$99</strong><span>starting price / mo</span></div>
+      </div>
+    </div>
+  </section>
+
   <section class="positioning">
     <div class="positioning-card">
       <h2>Built for teams sitting on content</h2>
@@ -594,6 +627,23 @@
 
   <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
   <canvas id="particleCanvas"></canvas>
+  <script>
+    (function(){
+      var bar = document.getElementById('announceBar');
+      var btn = document.getElementById('announceClose');
+      if(!bar || !btn) return;
+      // Keep bar visible for 7 days after dismiss
+      var DISMISS_KEY = 'sff_announce_dismissed_v1';
+      var dismissed = localStorage.getItem(DISMISS_KEY);
+      if(dismissed && Date.now() < parseInt(dismissed, 10)) {
+        bar.classList.add('hidden');
+      }
+      btn.addEventListener('click', function(){
+        bar.classList.add('hidden');
+        localStorage.setItem(DISMISS_KEY, Date.now() + 7*24*60*60*1000);
+      });
+    })();
+  </script>
   <script src="/main.js" defer></script>
   <script src="/concierge-widget-new.js" defer></script>
   <script src="/demo-section.js" defer></script>

@@ -318,6 +318,48 @@ a:hover{text-shadow:0 0 16px rgba(198,255,64,.6)}
 
 #particleCanvas{position:fixed;left:0;top:0;pointer-events:none;width:100vw;height:100vh;z-index:0}
 
+/* =============================================
+   ANNOUNCEMENT BAR
+   ============================================= */
+.announce-bar{background:linear-gradient(90deg,rgba(198,255,64,.12),rgba(198,255,64,.06),rgba(198,255,64,.12));border-bottom:1px solid rgba(198,255,64,.25);padding:10px 18px;position:relative;z-index:200;transition:max-height .3s,opacity .3s,padding .3s}
+.announce-bar.hidden{max-height:0;opacity:0;padding:0;overflow:hidden;pointer-events:none}
+.announce-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center}
+.announce-dot{width:8px;height:8px;border-radius:50%;background:var(--neon);flex-shrink:0;box-shadow:0 0 8px var(--neon);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+.announce-text{font-size:.85rem;color:rgba(255,255,255,.85);line-height:1.4}
+.announce-text strong{color:#fff}
+.announce-cta{font-size:.85rem;font-weight:700;color:var(--neon);text-decoration:none;white-space:nowrap;border:1px solid rgba(198,255,64,.4);padding:4px 12px;border-radius:999px;transition:.2s background,.2s color}
+.announce-cta:hover{background:var(--neon);color:#000}
+.announce-close{background:none;border:none;color:rgba(255,255,255,.4);font-size:1.2rem;cursor:pointer;padding:0 4px;margin-left:4px;line-height:1;transition:.2s color;flex-shrink:0}
+.announce-close:hover{color:#fff}
+/* Push header down when bar is visible */
+body:has(.announce-bar:not(.hidden)) .header{top:0}
+
+/* =============================================
+   HERO SFFOS PILL
+   ============================================= */
+.hero-sffos-pill{display:inline-flex;align-items:center;gap:0;margin-top:18px;text-decoration:none;background:rgba(198,255,64,.06);border:1px solid rgba(198,255,64,.3);border-radius:999px;overflow:hidden;transition:.2s transform,.2s box-shadow}
+.hero-sffos-pill:hover{transform:translateY(-2px);box-shadow:0 0 20px rgba(198,255,64,.2)}
+.hero-sffos-pill-label{font-size:.75rem;color:rgba(255,255,255,.55);padding:6px 12px 6px 14px;letter-spacing:.04em;border-right:1px solid rgba(198,255,64,.2)}
+.hero-sffos-pill-cta{font-size:.8rem;font-weight:700;color:var(--neon);padding:6px 14px 6px 12px}
+
+/* =============================================
+   EDITOR BRIDGE SECTION
+   ============================================= */
+.editor-bridge{padding:var(--section-gap) 18px;position:relative;z-index:1}
+.editor-bridge-card{max-width:1200px;margin:0 auto;background:linear-gradient(135deg,rgba(198,255,64,.05) 0%,rgba(0,0,0,0) 60%);border:1px solid rgba(198,255,64,.2);border-radius:28px;padding:52px 48px;display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center;position:relative;overflow:hidden}
+.editor-bridge-card::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(198,255,64,.08) 0%,transparent 70%);pointer-events:none}
+@media(max-width:860px){.editor-bridge-card{grid-template-columns:1fr;padding:36px 28px}}
+.editor-bridge-left h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;line-height:1.25;margin:10px 0 16px}
+.editor-bridge-left p{color:var(--muted);line-height:1.7;max-width:560px;margin:0 0 28px}
+.editor-bridge-ctas{display:flex;gap:14px;flex-wrap:wrap}
+.editor-bridge-right{display:grid;grid-template-columns:1fr 1fr;gap:16px;min-width:260px}
+@media(max-width:860px){.editor-bridge-right{grid-template-columns:repeat(4,1fr);min-width:0}}
+@media(max-width:560px){.editor-bridge-right{grid-template-columns:repeat(2,1fr)}}
+.editor-bridge-stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:18px 14px;text-align:center}
+.editor-bridge-stat strong{display:block;font-size:1.7rem;font-weight:800;color:var(--neon);line-height:1}
+.editor-bridge-stat span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:6px;display:block;line-height:1.4}
+
 /* Nav SFFOS badge */
 .nav-link-sffos{color:var(--neon);font-weight:700;display:inline-flex;align-items:center;gap:6px}
 .nav-badge{background:var(--neon);color:#000;font-size:.6rem;font-weight:800;padding:2px 6px;border-radius:999px;letter-spacing:.1em;text-transform:uppercase;line-height:1.4}
