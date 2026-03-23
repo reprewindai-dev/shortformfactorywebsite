@@ -146,7 +146,8 @@ a:hover{text-shadow:0 0 16px rgba(198,255,64,.6)}
 .demo-status{display:flex;gap:.5rem;align-items:center;color:rgba(255,255,255,.7);font-size:.9rem}
 .demo-status span{display:inline-flex;width:10px;height:10px;border-radius:50%;background:#06f46b;box-shadow:0 0 12px rgba(6,244,107,.6)}
 .demo-player{margin-top:1.5rem;background:#040404;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:1.25rem;box-shadow:0 25px 60px rgba(0,0,0,.55)}
-.demo-preview{border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#020202}
+.demo-preview{position:relative;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#020202}
+#demoCanvas{display:block;width:100%;height:auto;max-width:640px}
 .demo-caption-overlay{position:absolute;left:32px;right:32px;bottom:32px;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
 .demo-caption-bubble{background:rgba(0,0,0,.82);border:1px solid rgba(255,255,255,.2);border-radius:40px;padding:10px 22px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#fff}
 .demo-caption-bubble.accent{align-self:flex-end;background:rgba(198,255,64,.15);border-color:rgba(198,255,64,.4);color:#eaffd6}
@@ -316,6 +317,44 @@ a:hover{text-shadow:0 0 16px rgba(198,255,64,.6)}
 .back-to-top.show{display:flex}
 
 #particleCanvas{position:fixed;left:0;top:0;pointer-events:none;width:100vw;height:100vh;z-index:0}
+
+/* Nav SFFOS badge */
+.nav-link-sffos{color:var(--neon);font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.nav-badge{background:var(--neon);color:#000;font-size:.6rem;font-weight:800;padding:2px 6px;border-radius:999px;letter-spacing:.1em;text-transform:uppercase;line-height:1.4}
+
+/* Section eyebrow */
+.section-eyebrow{color:var(--neon);text-transform:uppercase;letter-spacing:.2em;font-size:.78rem;margin:0 0 10px;font-weight:700}
+
+/* SFFOS Product Section */
+.sffos-product{padding:var(--section-gap) 18px;position:relative;z-index:1}
+.sffos-product .section-header{padding-bottom:0}
+.sffos-grid{max-width:1200px;margin:40px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+@media(max-width:960px){.sffos-grid{grid-template-columns:1fr}}
+
+.sffos-features-col{display:grid;gap:24px}
+.sffos-feature{display:flex;gap:16px;align-items:flex-start;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:18px;transition:.2s transform,.2s box-shadow}
+.sffos-feature:hover{transform:translateY(-3px);box-shadow:0 0 24px rgba(198,255,64,.2)}
+.sffos-icon{font-size:1.6rem;flex-shrink:0;margin-top:2px}
+.sffos-feature h4{margin:0 0 4px;font-size:1rem;font-weight:700}
+.sffos-feature p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.5}
+
+.sffos-pricing-col{position:sticky;top:88px}
+.sffos-pricing-card{background:linear-gradient(135deg,#090909,#0d0d0d);border:1px solid rgba(198,255,64,.25);border-radius:28px;padding:32px;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(198,255,64,.08)}
+.sffos-pricing-label{color:var(--muted);text-transform:uppercase;letter-spacing:.18em;font-size:.75rem;margin:0 0 20px;font-weight:700}
+.sffos-tiers{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.sffos-tier{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 18px;position:relative}
+.sffos-tier-popular{border-color:rgba(198,255,64,.45);background:rgba(198,255,64,.05);box-shadow:0 0 28px rgba(198,255,64,.12)}
+.sffos-tier-badge{position:absolute;top:-10px;right:16px;background:var(--neon);color:#000;font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:999px;letter-spacing:.1em;text-transform:uppercase}
+.sffos-tier-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.sffos-tier-name{font-weight:700;font-size:1rem}
+.sffos-tier-price{font-size:1.4rem;font-weight:800;color:var(--neon)}
+.sffos-tier-price span{font-size:.85rem;font-weight:400;color:var(--muted)}
+.sffos-tier-desc{margin:0;font-size:.85rem;color:var(--muted);line-height:1.5}
+.sffos-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.sffos-metric{text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:12px 8px}
+.sffos-metric strong{display:block;font-size:1.5rem;font-weight:800;color:var(--neon)}
+.sffos-metric span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
+.sffos-note{text-align:center;color:var(--muted);font-size:.8rem;margin:12px 0 0}
 
 /* Defensive: hide accidental duplicate nav rows */
 nav + nav { display: none !important; }

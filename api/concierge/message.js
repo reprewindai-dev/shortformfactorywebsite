@@ -1,5 +1,5 @@
-// Fully Automated Rule-Based Concierge - No Paid APIs Required
-// Smart pattern matching, intent detection, and natural conversation flow
+// ShortFormFactory Booking Concierge
+// Service-guide focused — only references actual website services and pricing
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -14,8 +14,8 @@ export default async function handler(req, res) {
     // Rate limiting
     if (isRateLimited(sessionId)) {
       return res.status(200).json({
-        message: "I'm processing your request. Give me just a moment!",
-        lead_score: calculateLeadScore(userAnswers || {}),
+        message: "Give me just a second — I'm still processing your last message!",
+        lead_score: 50,
         intent_tier: 'warm',
         recommended_package: null,
         recommended_next_step: 'continue_conversation',
@@ -27,12 +27,12 @@ export default async function handler(req, res) {
     // Input sanitization
     if (containsDisallowedContent(message)) {
       return res.status(200).json({
-        message: "I'm here to help with your short-form video content needs. What are you looking to accomplish?",
+        message: "I'm here to help you with ShortFormFactory's video editing services. What can I help you with today?",
         lead_score: 25,
         intent_tier: 'cold',
         recommended_package: null,
         recommended_next_step: 'continue_conversation',
-        quick_actions: ['Learn about services', 'See pricing', 'Book a call'],
+        quick_actions: ['See our services', 'Get pricing', 'Book a call'],
         model_used: 'filtered'
       });
     }
@@ -60,12 +60,12 @@ export default async function handler(req, res) {
     console.error('Concierge error:', error);
     
     res.status(200).json({
-      message: "I'd love to help you with your short-form content strategy. What's your main goal right now?",
+      message: "Happy to help! You can explore our services at shortformfactory.com/services, place an order at /order, or book a strategy call. What would you like to do?",
       lead_score: 25,
       intent_tier: 'cold',
       recommended_package: null,
       recommended_next_step: 'continue_conversation',
-      quick_actions: ['Generate more leads', 'Build brand awareness', 'Save time on editing'],
+      quick_actions: ['See services', 'Get pricing', 'Place an order', 'Book a call'],
       model_used: 'fallback',
       latency_ms: Date.now() - startTime
     });
@@ -77,7 +77,7 @@ export default async function handler(req, res) {
 // ===========================================
 
 const KNOWLEDGE_BASE = {
-  // Services with full details
+  // ShortFormFactory — actual services & pricing from the website
   services: {
     aiReel: {
       name: 'AI Reel Edit',
@@ -102,10 +102,11 @@ const KNOWLEDGE_BASE = {
     },
     podcastRepurpose: {
       name: 'Podcast/YouTube Repurpose',
-      description: 'Transform long-form content into viral clips',
+      description: 'Send one podcast, interview, or talking-head video and get 5–15 ready-to-post clips in 24–48 hours. Our flagship service.',
       pricing: { basic: 40, standard: 95, premium: 220 },
+      batchPrice: 220,
       turnaround: '24-48 hours',
-      features: ['Clip discovery', 'Viral captions included', 'B-roll integration', 'Multi-platform crops']
+      features: ['5–15 clips per video', 'Hook-focused cuts', 'Platform-ready formatting', 'Captions available as add-on']
     },
     autoCaptions: {
       name: 'Auto Captions',
@@ -137,30 +138,14 @@ const KNOWLEDGE_BASE = {
     }
   },
 
-  // Monthly packages
-  packages: {
-    starter: {
-      name: 'Starter',
-      price: 1500,
-      clips: '5/week (20/month)',
-      features: ['Basic editing & captions', '2 revisions/month', '48-hour delivery'],
-      bestFor: 'Small businesses just starting with video'
-    },
-    growth: {
-      name: 'Growth',
-      price: 3500,
-      clips: '15/week (60/month)',
-      features: ['Premium editing + strategy', 'Content repurposing', '24-hour delivery', 'Performance analytics'],
-      bestFor: 'Growing businesses serious about content',
-      popular: true
-    },
-    scale: {
-      name: 'Scale',
-      price: 7500,
-      clips: '30+/week (120+/month)',
-      features: ['Full-service production', 'Strategy consulting', '12-hour delivery', 'Dedicated account manager'],
-      bestFor: 'Agencies, large brands, high-volume needs'
-    }
+  // Flagship offer (shown on homepage)
+  flagship: {
+    name: 'Podcast / YouTube Repurpose',
+    description: 'Turn one long video into a batch of short-form content',
+    startingPrice: 220,
+    includes: '5–15 clips, hook-focused cuts, platform-ready formatting',
+    turnaround: '24-48 hours',
+    orderUrl: 'https://shortformfactory.com/order'
   },
 
   // Add-ons (all prices in USD)
@@ -176,12 +161,49 @@ const KNOWLEDGE_BASE = {
     { name: 'Source File Delivery', price: 15 }
   ],
 
-  // Revision policy
-  revisions: {
-    basic: 0,
-    standard: 1,
-    premium: 2,
-    note: 'Within 7 days, within original scope'
+  // Business model
+  businessModel: {
+    pricing: 'Flat-rate, per project/batch',
+    contracts: 'No contracts required',
+    market: 'North America focused',
+    delivery: '24–48 hours standard',
+    revisions: {
+      basic: 0,
+      standard: 1,
+      premium: 2,
+      note: 'Within 7 days, within original scope'
+    }
+  },
+
+  // SFFOS — separate SaaS product at shortformfactory.shop
+  sffos: {
+    name: 'ShortFormFactory OS (SFFOS)',
+    tagline: 'The All-In-One Video Editor OS',
+    description: 'A SaaS platform for video editors and agencies. Merges sales, delivery, and operations into one control panel.',
+    url: 'https://shortformfactory.shop',
+    pricing: {
+      creator: { price: 99, period: 'month', description: 'Perfect for freelance video editors — up to 10 projects, AI lead qualification, automated proposals' },
+      professional: { price: 299, period: 'month', description: 'For growing video agencies — unlimited projects, all integrations, team collaboration (5 members), advanced analytics' },
+      enterprise: { price: 999, period: 'month', description: 'For large production companies — everything in Professional plus white-label, dedicated account manager, SLA guarantee' }
+    },
+    features: ['AI Lead Qualification', 'Smart Proposal Generator', 'Video Tool Integrations (Premiere, Final Cut, CapCut)', 'Automatic Time Tracking', 'Revenue Engine with invoicing', 'Content Repurposing AI']
+  },
+
+  // Company info
+  company: {
+    name: 'ShortFormFactory',
+    website: 'https://shortformfactory.com',
+    email: 'shortformfactory.help@gmail.com',
+    orderPage: '/order',
+    servicesPage: '/services',
+    demoPage: '/demo',
+    contactPage: '/contact',
+    bookingUrl: 'https://calendly.com/shortformfactory/30min',
+    socials: {
+      tiktok: 'https://www.tiktok.com/@short.formfactory',
+      instagram: 'https://www.instagram.com/short.formfactory',
+      youtube: 'https://www.youtube.com/@short.formfactory'
+    }
   }
 };
 
@@ -237,6 +259,13 @@ const INTENT_PATTERNS = {
     urgency: [/asap/i, /urgent/i, /immediately/i, /this week/i, /right away/i]
   },
 
+  // SFFOS product questions
+  sffos: [
+    /sffos/i, /shortformfactory os/i, /video editor os/i, /saas/i, /platform/i,
+    /software/i, /app/i, /subscription/i, /monthly plan/i, /creator plan/i,
+    /professional plan/i, /enterprise/i, /tool/i, /shortformfactory\.shop/i
+  ],
+
   // Greetings
   greeting: [
     /^hi$/i, /^hello$/i, /^hey$/i, /^yo$/i, /^sup$/i, /good morning/i,
@@ -269,27 +298,31 @@ function generateSmartResponse(message, context) {
   // Check for greeting first
   if (INTENT_PATTERNS.greeting.some(p => p.test(lowerMessage)) && conversationHistory.length < 2) {
     return {
-      message: "Hey! I'm the ShortFormFactory concierge. I help businesses get more clients through short-form video. What are you looking to accomplish with your content?",
+      message: "Hey! I'm the ShortFormFactory concierge. I can help you explore our services, get a quote, or book a call. What are you looking for?",
       lead_score: leadScore,
       intent_tier: intentTier,
       recommended_package: null,
       recommended_next_step: 'continue_conversation',
       qualification_data: updatedAnswers,
-      quick_actions: ['Generate more leads', 'Build brand awareness', 'Save time on editing', 'See pricing']
+      quick_actions: ['See all services', 'Get pricing', 'Book a strategy call', 'Learn about SFFOS']
     };
   }
 
-  // Check for ready to buy signals
+  // Check for SFFOS questions
+  if (INTENT_PATTERNS.sffos.some(p => p.test(lowerMessage))) {
+    return handleSFFOSQuestion(updatedAnswers, leadScore, intentTier);
+  }
+
+  // Check for ready to buy / order signals
   if (INTENT_PATTERNS.readyToBuy.some(p => p.test(lowerMessage))) {
-    const pkg = recommendPackage(updatedAnswers);
     return {
-      message: `Awesome! Based on what you've shared, I'd recommend our ${KNOWLEDGE_BASE.packages[pkg].name} package at $${KNOWLEDGE_BASE.packages[pkg].price}/month. It includes ${KNOWLEDGE_BASE.packages[pkg].clips} clips with ${KNOWLEDGE_BASE.packages[pkg].features[0].toLowerCase()}. Ready to book a quick strategy call to get you set up?`,
+      message: "Let's get you set up! Our flagship service is Podcast/YouTube Repurpose — starting at $220 per batch, you get 5–15 ready-to-post clips in 24–48 hours. Want to place an order now, or would you like to book a quick call first?",
       lead_score: Math.max(leadScore, 70),
       intent_tier: 'hot',
-      recommended_package: pkg,
+      recommended_package: 'podcastRepurpose',
       recommended_next_step: 'book_call',
       qualification_data: updatedAnswers,
-      quick_actions: ['Book a call', 'Get a quote first', 'Tell me more about this package']
+      quick_actions: ['Place an order now', 'Book a call first', 'See all services']
     };
   }
 
@@ -324,23 +357,8 @@ function generateSmartResponse(message, context) {
   const faqResponse = handleFAQ(message, updatedAnswers, leadScore, intentTier);
   if (faqResponse) return faqResponse;
 
-  // Default: Continue qualification or provide recommendation
-  if (leadScore >= 60 && Object.keys(updatedAnswers).length >= 3) {
-    // Enough info to make recommendation
-    const pkg = recommendPackage(updatedAnswers);
-    return {
-      message: `Based on what you've shared, I think our ${KNOWLEDGE_BASE.packages[pkg].name} package would be perfect for you. It's $${KNOWLEDGE_BASE.packages[pkg].price}/month and includes ${KNOWLEDGE_BASE.packages[pkg].clips} clips. ${KNOWLEDGE_BASE.packages[pkg].bestFor}. Want me to set up a quick call to discuss the details?`,
-      lead_score: leadScore,
-      intent_tier: intentTier,
-      recommended_package: pkg,
-      recommended_next_step: intentTier === 'hot' ? 'book_call' : 'request_quote',
-      qualification_data: updatedAnswers,
-      quick_actions: ['Book a call', 'Get a custom quote', 'Tell me more first']
-    };
-  }
-
-  // Need more qualification info
-  return getNextQualificationQuestion(updatedAnswers, leadScore, intentTier);
+  // Default: guide toward services or booking
+  return getServiceGuideResponse(updatedAnswers, leadScore, intentTier);
 }
 
 // ===========================================
@@ -366,15 +384,15 @@ function handlePricingQuestion(message, answers, leadScore, intentTier) {
     }
   }
 
-  // General pricing overview - show individual services first for accessibility
+  // General pricing overview — actual website pricing only
   return {
-    message: `Here's our pricing:\n\n**Individual Services (per video):**\n• Auto Captions: $15-75\n• Viral Captions: $20-110\n• AI Reel Edit: $25-140\n• Social Media Edit: $30-160\n• Podcast Repurpose: $40-220\n• Background Removal: $25-150\n• Audio Sync: $15-95\n• Smart Cut: $20-120\n\n**Monthly Packages (for regular content):**\n• Starter: $1,500/mo (5 clips/week)\n• Growth: $3,500/mo (15 clips/week)\n• Scale: $7,500/mo (30+ clips/week)\n\nAre you looking for a one-time project or ongoing content?`,
+    message: `Here's our pricing (flat-rate, no contracts):\n\n**Flagship Service:**\n• Podcast/YouTube Repurpose — starting at $220/batch (5–15 clips, 24–48hr delivery)\n\n**Per-Video Services:**\n• Auto Captions: $15–75\n• Viral Captions: $20–110\n• AI Reel Edit: $25–140\n• Social Media Edit: $30–160\n• Background Removal: $25–150\n• Audio Sync: $15–95\n• Smart Cut: $20–120\n\n**Add-ons:** Rush Delivery +$25, Extra Clips +$15, Color Grade +$20, and more.\n\nReady to place an order or have questions?`,
     lead_score: leadScore,
     intent_tier: intentTier,
-    recommended_package: recommendPackage(answers),
+    recommended_package: null,
     recommended_next_step: 'continue_conversation',
     qualification_data: answers,
-    quick_actions: ['Just one video', 'A few videos', 'Ongoing weekly content', 'Tell me more about packages']
+    quick_actions: ['Place an order', 'Book a call', 'See all services', 'What\'s the turnaround?']
   };
 }
 
@@ -424,13 +442,13 @@ function handleObjections(message, answers, leadScore) {
   // Price objection
   if (INTENT_PATTERNS.objections.price.some(p => p.test(lowerMessage))) {
     return {
-      message: "I totally get it - budget matters. Here's the thing: our Starter package at $1,500/mo breaks down to just $75 per clip for professional editing. Most clients see 3-5x ROI within 90 days through increased engagement and conversions. We also have individual services starting at $15 if you want to test us out first. What would work better for your situation?",
+      message: "Budget is important — and ours is flat-rate with no contracts. Individual services start at $15 for auto captions. Our flagship Podcast Repurpose batch starts at $220 and gives you 5–15 clips ready to post. You can also start with a single video to test us out. What type of content are you working with?",
       lead_score: leadScore,
       intent_tier: 'warm',
-      recommended_package: 'starter',
-      recommended_next_step: 'request_quote',
+      recommended_package: null,
+      recommended_next_step: 'continue_conversation',
       qualification_data: answers,
-      quick_actions: ['Tell me about Starter', 'Try a single video first', 'What ROI do clients see?']
+      quick_actions: ['Start with one video', 'See all services', 'Book a call to discuss']
     };
   }
 
@@ -547,67 +565,54 @@ function handleFAQ(message, answers, leadScore, intentTier) {
   return null; // No FAQ match
 }
 
-function getNextQualificationQuestion(answers, leadScore, intentTier) {
-  // Determine what info we're missing and ask naturally
-  
-  if (!answers.business_type && !answers.content_type) {
-    return {
-      message: "To give you the best recommendation, tell me a bit about your business. What do you sell or what industry are you in?",
-      lead_score: leadScore,
-      intent_tier: intentTier,
-      recommended_package: null,
-      recommended_next_step: 'continue_conversation',
-      qualification_data: answers,
-      quick_actions: ['Coaching/Consulting', 'E-commerce/Products', 'SaaS/Tech', 'Agency/Services']
-    };
-  }
-
-  if (!answers.content_volume && !answers.content_needs) {
-    return {
-      message: "How much content are you looking to produce? This helps me recommend the right package for you.",
-      lead_score: leadScore,
-      intent_tier: intentTier,
-      recommended_package: null,
-      recommended_next_step: 'continue_conversation',
-      qualification_data: answers,
-      quick_actions: ['5-10 videos/week', '15-20 videos/week', '30+ videos/week', 'Just a few to start']
-    };
-  }
-
-  if (!answers.budget_range && !answers.marketing_budget) {
-    return {
-      message: "What's your monthly budget for content production? This helps me match you with the right solution.",
-      lead_score: leadScore,
-      intent_tier: intentTier,
-      recommended_package: null,
-      recommended_next_step: 'continue_conversation',
-      qualification_data: answers,
-      quick_actions: ['Under $1,000', '$1,000-$3,000', '$3,000-$5,000', '$5,000+']
-    };
-  }
-
-  if (!answers.timeline) {
-    return {
-      message: "When are you looking to get started? This helps me prioritize your setup.",
-      lead_score: leadScore,
-      intent_tier: intentTier,
-      recommended_package: null,
-      recommended_next_step: 'continue_conversation',
-      qualification_data: answers,
-      quick_actions: ['ASAP', 'Within 2 weeks', 'Within a month', 'Just exploring']
-    };
-  }
-
-  // Have enough info, make recommendation
-  const pkg = recommendPackage(answers);
+function handleSFFOSQuestion(answers, leadScore, intentTier) {
+  const sffos = KNOWLEDGE_BASE.sffos;
   return {
-    message: `Thanks for sharing! Based on what you've told me, I'd recommend our ${KNOWLEDGE_BASE.packages[pkg].name} package. It's $${KNOWLEDGE_BASE.packages[pkg].price}/month and includes ${KNOWLEDGE_BASE.packages[pkg].clips} clips. ${KNOWLEDGE_BASE.packages[pkg].bestFor}. Sound like a fit?`,
-    lead_score: Math.max(leadScore, 50),
-    intent_tier: leadScore >= 60 ? 'warm' : intentTier,
-    recommended_package: pkg,
-    recommended_next_step: leadScore >= 60 ? 'book_call' : 'request_quote',
+    message: `SFFOS (ShortFormFactory OS) is our all-in-one platform for video editors and agencies. It consolidates 15+ tools into one control panel:\n\n• **Creator** — $99/month (freelancers, up to 10 projects, AI lead qualification, automated proposals)\n• **Professional** — $299/month (agencies, unlimited projects, team of 5, all integrations, advanced analytics)\n• **Enterprise** — $999/month (large companies, white-label, dedicated account manager, SLA guarantee)\n\nFeatures include AI Lead Qualification, Smart Proposals, Premiere/Final Cut/CapCut integrations, Time Tracking, and a Revenue Engine.\n\nSFFOS is available at shortformfactory.shop. Want to know more or get started?`,
+    lead_score: leadScore,
+    intent_tier: intentTier,
+    recommended_package: null,
+    recommended_next_step: 'continue_conversation',
     qualification_data: answers,
-    quick_actions: ['Yes, let\'s do it', 'Tell me more', 'I have questions']
+    quick_actions: ['Start free trial at shortformfactory.shop', 'Tell me more about features', 'I need editing services instead']
+  };
+}
+
+function getServiceGuideResponse(answers, leadScore, intentTier) {
+  // Guide users toward the right service or action — no business qualification
+  if (!answers.content_type && !answers.service_interest) {
+    return {
+      message: "What type of content are you working with? That'll help me point you to the right service.",
+      lead_score: leadScore,
+      intent_tier: intentTier,
+      recommended_package: null,
+      recommended_next_step: 'continue_conversation',
+      qualification_data: answers,
+      quick_actions: ['Podcast / long-form video', 'Talking-head / solo clips', 'Short clips / reels', 'Something else']
+    };
+  }
+
+  if (answers.content_type === 'podcast' || answers.service_interest === 'repurpose') {
+    return {
+      message: `Our Podcast/YouTube Repurpose service sounds like a great fit. Send us one long-form video and we return 5–15 platform-ready short clips in 24–48 hours. Starting at $220 per batch. No contracts, flat-rate pricing. Ready to place an order?`,
+      lead_score: Math.max(leadScore, 60),
+      intent_tier: 'warm',
+      recommended_package: 'podcastRepurpose',
+      recommended_next_step: 'book_call',
+      qualification_data: answers,
+      quick_actions: ['Place an order', 'Book a call first', 'See what\'s included']
+    };
+  }
+
+  // General guide
+  return {
+    message: "Here's the quickest way to get started with ShortFormFactory:\n\n1. **Order online** at shortformfactory.com/order — pick your service, upload your footage, and receive your clips in 24–48 hours.\n2. **Book a call** if you want to talk through your content needs first.\n3. **Explore services** at shortformfactory.com/services to see the full menu.\n\nWhat works best for you?",
+    lead_score: leadScore,
+    intent_tier: intentTier,
+    recommended_package: null,
+    recommended_next_step: 'continue_conversation',
+    qualification_data: answers,
+    quick_actions: ['Place an order', 'Book a call', 'See all services', 'Get pricing']
   };
 }
 
@@ -722,13 +727,12 @@ function containsDisallowedContent(message) {
 function generateFinalRecommendation(userAnswers) {
   const leadScore = calculateLeadScore(userAnswers);
   const intentTier = getIntentTier(leadScore);
-  const recommendedPackage = recommendPackage(userAnswers);
   const nextStep = getNextStep(intentTier);
   
   const messages = {
-    hot: "Perfect! Based on your answers, you're exactly who we help get results. I recommend our Growth package. Let's book a 15-minute call to finalize your content strategy.",
-    warm: "You're on the right track! I can prepare a custom quote based on your needs with different package options.",
-    cold: "Here's a free resource to help you get started - our proven short-form content planning template."
+    hot: "Our flagship Podcast/YouTube Repurpose service starts at $220 per batch — you get 5–15 ready-to-post clips in 24–48 hours. No contracts, flat-rate. Ready to place an order or book a quick call?",
+    warm: "Sounds like ShortFormFactory could be a great fit. Check out our services at shortformfactory.com/services or book a 30-min call to talk through your project.",
+    cold: "No rush! Explore our full service menu at shortformfactory.com/services whenever you're ready. Our prices start at $15 per video."
   };
   
   return {
@@ -736,7 +740,7 @@ function generateFinalRecommendation(userAnswers) {
     message: messages[intentTier],
     lead_score: leadScore,
     intent_tier: intentTier,
-    recommended_package: recommendedPackage,
+    recommended_package: null,
     recommended_next_step: nextStep
   };
 }
@@ -775,12 +779,12 @@ function getIntentTier(score) {
 }
 
 function recommendPackage(answers) {
-  const budget = answers.marketing_budget;
-  const contentNeeds = answers.content_needs || '';
-  
-  if (budget === '5000+' || contentNeeds.includes('20')) return 'scale';
-  if (budget === '2000-5000' || contentNeeds.includes('10')) return 'growth';
-  return 'starter';
+  // Returns the most relevant service key, not a fake monthly package
+  const content = (answers.content_type || '').toLowerCase();
+  if (content.includes('podcast') || content.includes('repurpose') || content.includes('long')) return 'podcastRepurpose';
+  if (content.includes('caption')) return 'viralCaptions';
+  if (content.includes('reel') || content.includes('tiktok') || content.includes('short')) return 'aiReel';
+  return 'podcastRepurpose'; // default to flagship
 }
 
 function getNextStep(tier) {
@@ -801,11 +805,11 @@ function parseAIResponse(aiText, context) {
   
   return {
     type: 'question',
-    message: aiText || "I'm here to help you get more clients from short-form content.",
+    message: aiText || "I'm here to help you with ShortFormFactory's services. What can I help you with?",
     lead_score: 25,
     intent_tier: 'cold',
-    recommended_package: 'starter',
-    recommended_next_step: 'lead_magnet'
+    recommended_package: null,
+    recommended_next_step: 'continue_conversation'
   };
 }
 

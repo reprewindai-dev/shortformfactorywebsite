@@ -65,74 +65,46 @@ class ConciergeWidget {
     
     this.questions = [
       {
-        id: 'business',
-        text: "What do you sell? (e.g., coaching, courses, products, services)",
-        inputType: 'text',
-        placeholder: "Tell me about your business..."
-      },
-      {
-        id: 'target_audience',
-        text: "Who do you sell to? (e.g., entrepreneurs, fitness enthusiasts, B2B SaaS)",
-        inputType: 'text',
-        placeholder: "Describe your ideal customers..."
-      },
-      {
-        id: 'revenue',
-        text: "What's your current monthly revenue range?",
+        id: 'content_type',
+        text: "What type of content are you working with?",
         inputType: 'buttons',
         options: [
-          { value: '0-5k', label: '$0 - $5K' },
-          { value: '5k-25k', label: '$5K - $25K' },
-          { value: '25k-100k', label: '$25K - $100K' },
-          { value: '100k+', label: '$100K+' }
-        ]
-      },
-      {
-        id: 'marketing_budget',
-        text: "What's your monthly marketing budget or what are you willing to invest in content?",
-        inputType: 'buttons',
-        options: [
-          { value: '0-500', label: '$0 - $500' },
-          { value: '500-2000', label: '$500 - $2,000' },
-          { value: '2000-5000', label: '$2,000 - $5,000' },
-          { value: '5000+', label: '$5,000+' }
-        ]
-      },
-      {
-        id: 'content_needs',
-        text: "How many clips per week do you need and which platforms?",
-        inputType: 'text',
-        placeholder: "e.g., 10 clips/week on TikTok and Instagram Reels"
-      },
-      {
-        id: 'bottleneck',
-        text: "What's your biggest bottleneck right now?",
-        inputType: 'buttons',
-        options: [
-          { value: 'editing', label: 'Video editing/production' },
-          { value: 'strategy', label: 'Content strategy' },
-          { value: 'posting', label: 'Consistent posting' },
-          { value: 'leads', label: 'Getting leads from content' },
+          { value: 'podcast', label: 'Podcast / Long-form video' },
+          { value: 'talking_head', label: 'Talking-head / Solo clips' },
+          { value: 'reels', label: 'Short clips / Reels' },
           { value: 'other', label: 'Something else' }
         ]
       },
       {
-        id: 'timeline',
-        text: "When are you looking to start?",
+        id: 'service_interest',
+        text: "What do you need most help with?",
         inputType: 'buttons',
         options: [
-          { value: 'asap', label: 'ASAP' },
-          { value: '30days', label: 'Within 30 days' },
-          { value: 'later', label: 'Just exploring' }
+          { value: 'repurpose', label: 'Repurposing long videos into clips' },
+          { value: 'captions', label: 'Adding viral captions' },
+          { value: 'editing', label: 'Full video editing / reels' },
+          { value: 'not_sure', label: 'Not sure yet' }
         ]
       },
       {
-        id: 'decision_maker',
-        text: "Are you the decision maker for marketing investments?",
+        id: 'platform',
+        text: "Which platform(s) are you targeting?",
         inputType: 'buttons',
         options: [
-          { value: 'yes', label: 'Yes' },
-          { value: 'no', label: 'No, need to consult' }
+          { value: 'tiktok_reels', label: 'TikTok & Instagram Reels' },
+          { value: 'youtube_shorts', label: 'YouTube Shorts' },
+          { value: 'linkedin', label: 'LinkedIn' },
+          { value: 'all', label: 'All platforms' }
+        ]
+      },
+      {
+        id: 'timeline',
+        text: "When do you want to get started?",
+        inputType: 'buttons',
+        options: [
+          { value: 'asap', label: 'Ready now' },
+          { value: '30days', label: 'Within a few weeks' },
+          { value: 'later', label: 'Just exploring' }
         ]
       }
     ];
@@ -303,9 +275,9 @@ class ConciergeWidget {
     this.open();
     
     const greetingVariants = [
-      "Hey — I'm the ShortFormFactory concierge. Want more clients from short-form? I can recommend the fastest plan. What are you trying to accomplish right now?",
-      "Hi there! I help businesses like yours get predictable results from short-form content. What's your biggest goal right now?",
-      "Welcome! I'm here to help you create a high-performing content plan. What would make the biggest impact for your business this month?"
+      "Hey — I'm the ShortFormFactory concierge. I can help you find the right service, get a quote, or book a call. What are you looking for?",
+      "Hi! Need help picking the right editing service or want to book a strategy call? I've got you covered.",
+      "Welcome to ShortFormFactory! I can walk you through our services or get you set up. What do you need today?"
     ];
     
     const greeting = greetingVariants[Math.floor(Math.random() * greetingVariants.length)];
@@ -343,7 +315,7 @@ class ConciergeWidget {
     this.dismissMobilePrompt();
     
     if (this.conversationState === 'greeting') {
-      this.addMessage('assistant', "Hey! I'm the ShortFormFactory concierge. I can help you create a high-performing short-form content plan in 60 seconds. What are you trying to accomplish right now?");
+      this.addMessage('assistant', "Hey! I'm the ShortFormFactory concierge. I can help you explore our services, get a quote, or book a call. What do you need today?");
       this.conversationState = 'qualification';
       this.currentQuestion = 0;
     }
@@ -553,8 +525,8 @@ class ConciergeWidget {
     if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('expensive')) {
       return {
         responseType: 'objection',
-        message: "I understand pricing is important. We have packages starting at $1,500/mo for 5 clips per week. Most clients see 3-5x ROI within the first 90 days. Would you like me to recommend the best package for your goals?",
-        quickActions: ['Yes, recommend package', 'Tell me more about pricing']
+        message: "Our pricing is flat-rate with no contracts. Individual services start at $15. Our flagship Podcast/YouTube Repurpose batch starts at $220 and delivers 5–15 ready-to-post clips in 24–48 hours. Want the full pricing breakdown?",
+        quickActions: ['See full pricing', 'Place an order', 'Book a call']
       };
     }
     
@@ -589,34 +561,22 @@ class ConciergeWidget {
   }
 
   calculateLeadScore() {
-    let score = 0;
+    let score = 20; // Base score for visiting
     const answers = this.userAnswers;
     
-    // Revenue scoring
-    if (answers.revenue === '100k+') score += 25;
-    else if (answers.revenue === '25k-100k') score += 20;
-    else if (answers.revenue === '5k-25k') score += 15;
-    else score += 5;
+    // Content type scoring
+    if (answers.content_type && answers.content_type !== 'other') score += 20;
     
-    // Budget scoring
-    if (answers.marketing_budget === '5000+') score += 25;
-    else if (answers.marketing_budget === '2000-5000') score += 20;
-    else if (answers.marketing_budget === '500-2000') score += 15;
-    else score += 5;
+    // Service interest scoring
+    if (answers.service_interest && answers.service_interest !== 'not_sure') score += 20;
     
     // Timeline scoring
     if (answers.timeline === 'asap') score += 20;
     else if (answers.timeline === '30days') score += 15;
     else score += 5;
     
-    // Decision maker scoring
-    if (answers.decision_maker === 'yes') score += 15;
-    else score += 5;
-    
-    // Content needs scoring
-    if (answers.content_needs && answers.content_needs.includes('10')) score += 15;
-    else if (answers.content_needs && answers.content_needs.includes('5')) score += 10;
-    else score += 5;
+    // Platform scoring
+    if (answers.platform) score += 15;
     
     return Math.min(score, 100);
   }
@@ -629,12 +589,12 @@ class ConciergeWidget {
 
   recommendPackage() {
     const answers = this.userAnswers;
-    const budget = answers.marketing_budget;
-    const contentNeeds = answers.content_needs || '';
-    
-    if (budget === '5000+' || contentNeeds.includes('20')) return 'scale';
-    if (budget === '2000-5000' || contentNeeds.includes('10')) return 'growth';
-    return 'starter';
+    const content = (answers.content_type || '').toLowerCase();
+    const interest = (answers.service_interest || '').toLowerCase();
+    if (content === 'podcast' || interest === 'repurpose') return 'Podcast/YouTube Repurpose';
+    if (interest === 'captions') return 'Viral Captions';
+    if (interest === 'editing' || content === 'reels') return 'AI Reel Edit';
+    return 'Podcast/YouTube Repurpose';
   }
 
   getNextStep(tier) {
@@ -646,9 +606,9 @@ class ConciergeWidget {
   getRecommendationMessage(tier, pkg, nextStep) {
     const messages = {
       hot: {
-        book_call: "Perfect! Based on your answers, you're exactly who we help get results. I recommend our Growth package to start. Let's book a 15-minute call to finalize your content strategy.",
-        request_quote: "Great! You're a good fit for our services. I'll prepare a custom quote for you based on your needs.",
-        lead_magnet: "Thanks for sharing! Here's a free resource to help you get started."
+        book_call: `Great! Based on your content needs, I'd recommend our ${pkg} service. Let's book a quick 15-min call to get you started. Ready?`,
+        request_quote: `Our ${pkg} service sounds like a great fit. Ready to place an order, or want a custom quote first?`,
+        lead_magnet: `Our ${pkg} service is exactly what you need. Explore the details at shortformfactory.com/services whenever you're ready.`
       },
       warm: {
         book_call: "You're on the right track! A quick call would help me give you the best recommendation.",
@@ -799,7 +759,7 @@ class ConciergeWidget {
       <button type="button" class="concierge-mobile-dismiss" aria-label="Close concierge intro">×</button>
       <div class="concierge-mobile-copy">
         <span class="label">Concierge</span>
-        <p>Tap to get a revenue-ready content plan in under a minute.</p>
+        <p>Tap to get help finding the right editing service or book a call.</p>
       </div>
       <button type="button" class="concierge-mobile-cta">Open</button>
     `;
