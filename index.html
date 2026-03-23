@@ -625,8 +625,85 @@
     </div>
   </footer>
 
+  <!-- Scroll-triggered email capture bar -->
+  <div class="capture-bar" id="captureBar" role="dialog" aria-label="Get the free playbook" aria-hidden="true">
+    <button class="capture-bar-close" id="captureBarClose" aria-label="Dismiss">&times;</button>
+    <div class="capture-bar-inner">
+      <div class="capture-bar-copy">
+        <strong>Get the 10-clip playbook — free</strong>
+        <span>How one recording becomes a month of short-form content.</span>
+      </div>
+      <form class="capture-bar-form" id="captureBarForm" novalidate>
+        <input type="email" class="capture-bar-input" id="captureBarEmail" placeholder="your@email.com" required autocomplete="email">
+        <button type="submit" class="capture-bar-btn">Send it</button>
+      </form>
+      <p class="capture-bar-thanks" id="captureBarThanks" style="display:none;">✓ Check your inbox — playbook is on its way.</p>
+    </div>
+  </div>
+
   <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
   <canvas id="particleCanvas"></canvas>
+  <script>
+    // Scroll-triggered email capture bar
+    (function(){
+      var CAPTURE_KEY = 'sff_capture_dismissed_v1';
+      var bar = document.getElementById('captureBar');
+      var closeBtn = document.getElementById('captureBarClose');
+      var form = document.getElementById('captureBarForm');
+      var emailInput = document.getElementById('captureBarEmail');
+      var submitBtn = form ? form.querySelector('.capture-bar-btn') : null;
+      var thanks = document.getElementById('captureBarThanks');
+      if (!bar || !form) return;
+
+      // Don't show if already submitted or dismissed in last 30 days
+      var dismissed = localStorage.getItem(CAPTURE_KEY);
+      if (dismissed && Date.now() < parseInt(dismissed, 10)) return;
+
+      var shown = false;
+      function showBar() {
+        if (shown) return;
+        shown = true;
+        bar.setAttribute('aria-hidden', 'false');
+        bar.classList.add('visible');
+      }
+
+      // Trigger at 60% scroll depth
+      window.addEventListener('scroll', function() {
+        var scrollPct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+        if (scrollPct >= 0.6) showBar();
+      }, { passive: true });
+
+      // Dismiss
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          bar.classList.remove('visible');
+          localStorage.setItem(CAPTURE_KEY, Date.now() + 30 * 24 * 60 * 60 * 1000);
+        });
+      }
+
+      // Submit
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var email = emailInput ? emailInput.value.trim() : '';
+        if (!email) return;
+        if (submitBtn) submitBtn.disabled = true;
+
+        fetch('/api/capture/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, source: 'scroll_capture' })
+        }).then(function() {
+          if (form) form.style.display = 'none';
+          if (thanks) thanks.style.display = 'block';
+          // Permanently suppress after subscribe
+          localStorage.setItem(CAPTURE_KEY, Date.now() + 365 * 24 * 60 * 60 * 1000);
+          setTimeout(function() { bar.classList.remove('visible'); }, 3500);
+        }).catch(function() {
+          if (submitBtn) submitBtn.disabled = false;
+        });
+      });
+    })();
+  </script>
   <script>
     (function(){
       var bar = document.getElementById('announceBar');

@@ -360,6 +360,27 @@ body:has(.announce-bar:not(.hidden)) .header{top:0}
 .editor-bridge-stat strong{display:block;font-size:1.7rem;font-weight:800;color:var(--neon);line-height:1}
 .editor-bridge-stat span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:6px;display:block;line-height:1.4}
 
+/* =============================================
+   SCROLL CAPTURE BAR
+   ============================================= */
+.capture-bar{position:fixed;bottom:-120px;left:0;right:0;z-index:998;padding:0 18px;transition:bottom .4s cubic-bezier(.22,1,.36,1);pointer-events:none}
+.capture-bar.visible{bottom:18px;pointer-events:all}
+.capture-bar-inner{max-width:860px;margin:0 auto;background:#111111;border:1px solid rgba(198,255,64,.3);border-radius:16px;padding:18px 24px 18px 20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 0 1px rgba(198,255,64,.08)}
+.capture-bar-close{position:absolute;top:10px;right:10px;background:none;border:none;color:rgba(255,255,255,.35);font-size:1.3rem;cursor:pointer;line-height:1;padding:4px 8px;transition:.15s color}
+.capture-bar-close:hover{color:#fff}
+.capture-bar-copy{flex:1;min-width:160px}
+.capture-bar-copy strong{display:block;color:#ffffff;font-size:15px;font-weight:700;margin:0 0 3px}
+.capture-bar-copy span{color:#888;font-size:13px}
+.capture-bar-form{display:flex;gap:8px;flex-wrap:wrap}
+.capture-bar-input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;font-size:14px;padding:10px 14px;width:220px;outline:none;transition:.2s border-color}
+.capture-bar-input:focus{border-color:rgba(198,255,64,.5)}
+.capture-bar-input::placeholder{color:#555}
+.capture-bar-btn{background:#C6FF40;color:#000;font-weight:800;font-size:14px;border:none;border-radius:8px;padding:10px 20px;cursor:pointer;white-space:nowrap;transition:.15s opacity}
+.capture-bar-btn:hover{opacity:.88}
+.capture-bar-btn:disabled{opacity:.5;cursor:default}
+.capture-bar-thanks{color:#C6FF40;font-size:14px;font-weight:600;margin:0}
+@media(max-width:600px){.capture-bar-inner{flex-direction:column;align-items:flex-start;gap:14px}.capture-bar-input{width:100%}.capture-bar-form{width:100%}.capture-bar-btn{width:100%}}
+
 /* Nav SFFOS badge */
 .nav-link-sffos{color:var(--neon);font-weight:700;display:inline-flex;align-items:center;gap:6px}
 .nav-badge{background:var(--neon);color:#000;font-size:.6rem;font-weight:800;padding:2px 6px;border-radius:999px;letter-spacing:.1em;text-transform:uppercase;line-height:1.4}

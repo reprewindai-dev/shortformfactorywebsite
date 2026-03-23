@@ -353,6 +353,17 @@ class ConciergeWidget {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (emailRegex.test(message)) {
         this.userAnswers.email = message;
+
+        // Silent funnel enrollment — fire and forget
+        fetch('/api/capture/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: message,
+            firstName: this.userAnswers.name || '',
+            source: 'concierge_' + (this.conversationState || 'chat')
+          })
+        }).catch(() => {});
         
         // Process based on what triggered email collection
         if (this.conversationState === 'collect_email_for_call') {

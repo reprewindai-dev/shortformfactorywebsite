@@ -50,5 +50,11 @@
     { "source": "/demo", "destination": "/demo.html" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/blog/:slug", "destination": "/blog/post-template.html" }
+  ],
+  "crons": [
+    {
+      "path": "/api/funnel/cron",
+      "schedule": "0 9 * * *"
+    }
   ]
 }
