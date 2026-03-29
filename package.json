@@ -1,1 +1,39 @@
-{"name":"shortformfactory","version":"1.0.1","description":"ShortFormFactory - Professional short-form video editing services","main":"index.html","scripts":{"dev":"vercel dev","build":"echo \"Static site - no build needed\"","start":"vercel dev"},"dependencies":{"@neondatabase/serverless":"^0.9.0","@playwright/test":"^1.58.2","@vercel/speed-insights":"^2.0.0","ai":"^6.0.116","openai":"^6.31.0","resend":"^3.2.0","stripe":"^17.2.0"},"devDependencies":{"@vercel/node":"^3.0.0"},"keywords":["video editing","short-form","social media","stripe","payment processing","concierge","lead generation"],"author":"ShortFormFactory","license":"MIT","engines":{"node":">=18.0.0"}}
+{
+  "name": "shortformfactory",
+  "version": "1.0.2",
+  "description": "ShortFormFactory - Professional short-form video editing services",
+  "type": "module",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo \"Static site - no build needed\"",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.0",
+    "@playwright/test": "^1.58.2",
+    "@vercel/speed-insights": "^2.0.0",
+    "ai": "^6.0.116",
+    "openai": "^6.31.0",
+    "resend": "^3.2.0",
+    "stripe": "^17.2.0"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.0"
+  },
+  "keywords": [
+    "video editing",
+    "short-form",
+    "social media",
+    "stripe",
+    "payment processing",
+    "paypal",
+    "concierge",
+    "lead generation"
+  ],
+  "author": "ShortFormFactory",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
