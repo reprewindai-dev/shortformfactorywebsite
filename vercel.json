@@ -4,39 +4,25 @@
     "api/index.js": { "maxDuration": 30 }
   },
   "rewrites": [
-    { "source": "/api/concierge/:path*",   "destination": "/api/index" },
-    { "source": "/api/capture/email",       "destination": "/api/index" },
-    { "source": "/api/capture/unsubscribe", "destination": "/api/index" },
-    { "source": "/api/funnel/cron",         "destination": "/api/index" },
-    { "source": "/api/leads/:path*",        "destination": "/api/index" },
-    { "source": "/api/paypal/:path*",       "destination": "/api/index" },
-    { "source": "/api/stripe/:path*",       "destination": "/api/index" },
-    { "source": "/api/create-order",        "destination": "/api/index" },
-    { "source": "/api/capture-order",       "destination": "/api/index" },
-    { "source": "/api/webhook",             "destination": "/api/index" },
-    { "source": "/demo",                    "destination": "/demo.html" },
-    { "source": "/admin",                   "destination": "/admin.html" },
-    { "source": "/blog/:slug",              "destination": "/blog/post-template.html" }
+    { "source": "/api/concierge/:path*", "destination": "/api/index.js" },
+    { "source": "/api/capture/email", "destination": "/api/index.js" },
+    { "source": "/api/capture/unsubscribe", "destination": "/api/index.js" },
+    { "source": "/api/funnel/cron", "destination": "/api/index.js" },
+    { "source": "/api/leads/:path*", "destination": "/api/index.js" },
+    { "source": "/api/paypal/:path*", "destination": "/api/index.js" },
+    { "source": "/api/stripe/:path*", "destination": "/api/index.js" },
+    { "source": "/api/create-order", "destination": "/api/index.js" },
+    { "source": "/api/capture-order", "destination": "/api/index.js" },
+    { "source": "/api/webhook", "destination": "/api/index.js" }
   ],
-  "redirects": [
-    { "source": "/order.html",      "destination": "/order",      "permanent": true },
-    { "source": "/services.html",   "destination": "/services",   "permanent": true },
-    { "source": "/contact.html",    "destination": "/contact",    "permanent": true },
-    { "source": "/about.html",      "destination": "/about",      "permanent": true },
-    { "source": "/terms.html",      "destination": "/terms",      "permanent": true },
-    { "source": "/privacy.html",    "destination": "/privacy",    "permanent": true },
-    { "source": "/refunds.html",    "destination": "/refunds",    "permanent": true },
-    { "source": "/liability.html",  "destination": "/liability",  "permanent": true },
-    { "source": "/thank-you.html",  "destination": "/thank-you",  "permanent": true },
-    { "source": "/404.html",        "destination": "/404",        "permanent": true }
-  ],
-  "headers": [
-    { "source": "/(.*)\\.css",                              "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
-    { "source": "/(.*)\\.js",                               "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
-    { "source": "/assets/(.*)",                             "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
-    { "source": "/(.*)\\.svg",                              "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
-    { "source": "/(.*)\\.png",                              "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
-    { "source": "/(.*)\\.jpg",                              "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
-    { "source": "/(.*)\\.woff2",                            "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }
+  "routes": [
+    { "src": "/faq", "dest": "/faq/index.html" },
+    { "src": "/faq/", "dest": "/faq/index.html" },
+    { "src": "/trademark", "dest": "/trademark/index.html" },
+    { "src": "/trademark/", "dest": "/trademark/index.html" },
+    { "src": "/terms", "dest": "/terms/index.html" },
+    { "src": "/terms/", "dest": "/terms/index.html" },
+    { "src": "/privacy", "dest": "/privacy/index.html" },
+    { "src": "/privacy/", "dest": "/privacy/index.html" }
   ]
 }
