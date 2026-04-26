@@ -1,4 +1,7 @@
 {
+  "framework": null,
+  "installCommand": "npm ci",
+  "buildCommand": "echo \"No build step required\"",
   "outputDirectory": ".",
   "functions": {
     "api/index.js":           { "maxDuration": 30 },
@@ -9,7 +12,9 @@
     { "source": "/api/concierge/:path*",   "destination": "/api/index" },
     { "source": "/api/capture/email",      "destination": "/api/index" },
     { "source": "/api/leads/:path*",       "destination": "/api/index" },
+    { "source": "/api/paypal/config",      "destination": "/api/index" },
     { "source": "/api/paypal/:path*",      "destination": "/api/index" },
+    { "source": "/api/stripe/config",      "destination": "/api/index" },
     { "source": "/api/stripe/:path*",      "destination": "/api/index" },
     { "source": "/api/create-order",       "destination": "/api/index" },
     { "source": "/api/capture-order",      "destination": "/api/index" },

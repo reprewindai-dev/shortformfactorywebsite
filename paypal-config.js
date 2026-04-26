@@ -34,6 +34,42 @@
   window.PaymentState = PaymentState;
 
   const ORDER_SNAPSHOT_KEY = 'sff_last_order';
+  const PAYMENT_METHOD_SELECTOR = 'input[name="paymentMethod"]';
+
+  function setPaymentMethodAvailability(method, available, reason = '') {
+    const input = document.querySelector(`${PAYMENT_METHOD_SELECTOR}[value="${method}"]`);
+    if (!input) return;
+    input.disabled = !available;
+    const option = input.closest('.payment-method-option');
+    if (option) option.style.opacity = available ? '1' : '0.45';
+
+    const hint = document.getElementById('paymentHint');
+    if (!available && hint && reason) {
+      hint.textContent = reason;
+    }
+
+    if (!available && input.checked) {
+      const fallback = document.querySelector(`${PAYMENT_METHOD_SELECTOR}:not([value="${method}"]):not(:disabled)`);
+      if (fallback) {
+        fallback.checked = true;
+        fallback.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
+  }
+
+  async function preflightStripeAvailability() {
+    try {
+      const res = await fetch('/api/stripe/config');
+      const data = await res.json();
+      if (!res.ok || data.enabled === false || !data.publishableKey) {
+        setPaymentMethodAvailability('stripe', false, 'Stripe card checkout is temporarily unavailable.');
+      } else {
+        setPaymentMethodAvailability('stripe', true);
+      }
+    } catch {
+      setPaymentMethodAvailability('stripe', false, 'Stripe card checkout is temporarily unavailable.');
+    }
+  }
 
   function saveOrderSnapshot(payload) {
     try {
@@ -291,9 +327,11 @@
       if (this.stripe) return this.stripe;
       const res = await fetch('/api/stripe/config');
       const data = await res.json();
-      if (!res.ok || !data.publishableKey) {
+      if (!res.ok || data.enabled === false || !data.publishableKey) {
+        setPaymentMethodAvailability('stripe', false, 'Stripe card checkout is temporarily unavailable.');
         throw new Error(data.error || 'Stripe is not configured.');
       }
+      setPaymentMethodAvailability('stripe', true);
       this.publishableKey = data.publishableKey;
       if (typeof Stripe === 'undefined') {
         throw new Error('Stripe.js failed to load.');
@@ -372,9 +410,14 @@
 
       if (!configRes.ok || !config.clientId) {
         console.error("[PayPal Client] Failed to get PayPal config:", config);
-        showError("PayPal configuration error. Please try again later.");
+        setPaymentMethodAvailability('paypal', false, 'PayPal checkout is temporarily unavailable.');
         return;
       }
+      if (config.enabled === false || !config.clientId) {
+        setPaymentMethodAvailability('paypal', false, 'PayPal checkout is temporarily unavailable.');
+        return;
+      }
+      setPaymentMethodAvailability('paypal', true);
 
       console.log(`[PayPal Client] Config loaded - Mode: ${config.mode}`);
 
@@ -399,17 +442,21 @@
       console.error("[PayPal Client] Config fetch error:", err);
       // Fall back to checking if SDK was loaded via static script tag
       if (typeof paypal !== "undefined") {
+        setPaymentMethodAvailability('paypal', true);
         initPayPalButtons();
       } else {
-        showError("PayPal is temporarily unavailable. Please try again later.");
+        setPaymentMethodAvailability('paypal', false, 'PayPal checkout is temporarily unavailable.');
       }
     }
   }
 
   // Initialize on DOM ready
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", loadPayPalSDK);
+    document.addEventListener("DOMContentLoaded", async () => {
+      await preflightStripeAvailability();
+      await loadPayPalSDK();
+    });
   } else {
-    loadPayPalSDK();
+    preflightStripeAvailability().finally(loadPayPalSDK);
   }
 })();

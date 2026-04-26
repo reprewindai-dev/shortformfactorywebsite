@@ -31,6 +31,8 @@ async function sendEmail({ to, subject, html, previewText, replyTo }) {
 const KV_URL  = process.env.KV_REST_API_URL;
 const KV_TOK  = process.env.KV_REST_API_TOKEN;
 const SUB_PFX = 'sff:sub:';
+const LEADS_KEY = 'sff:leads:list';
+globalThis.__SFF_LEADS_FALLBACK = globalThis.__SFF_LEADS_FALLBACK || [];
 function kvH() { return { Authorization: `Bearer ${KV_TOK}`, 'Content-Type': 'application/json' }; }
 async function kvGet(key) {
   if (!KV_URL || !KV_TOK) return null;
@@ -42,6 +44,22 @@ async function kvSet(key, value) {
 }
 const getSub = (e) => kvGet(`${SUB_PFX}${e}`);
 const setSub = (e, d) => kvSet(`${SUB_PFX}${e}`, d);
+async function getLeads() {
+  if (!KV_URL || !KV_TOK) return globalThis.__SFF_LEADS_FALLBACK;
+  const leads = await kvGet(LEADS_KEY);
+  return Array.isArray(leads) ? leads : [];
+}
+async function appendLead(lead) {
+  if (!KV_URL || !KV_TOK) {
+    globalThis.__SFF_LEADS_FALLBACK.unshift(lead);
+    if (globalThis.__SFF_LEADS_FALLBACK.length > 500) globalThis.__SFF_LEADS_FALLBACK.length = 500;
+    return;
+  }
+  const leads = await getLeads();
+  leads.unshift(lead);
+  if (leads.length > 500) leads.length = 500;
+  return kvSet(LEADS_KEY, leads);
+}
 
 // ─── PRICING ─────────────────────────────────────────────────
 const SVC_P = {
@@ -117,33 +135,70 @@ async function rCaptureEmail(req, res) {
   if (r && process.env.RESEND_AUDIENCE_ID) {
     r.contacts.create({ email: norm, firstName: firstName || '', unsubscribed: false, audienceId: process.env.RESEND_AUDIENCE_ID }).catch(e => console.error('[capture] Resend audience:', e.message));
   }
-  await sendEmail({ to: norm, subject: "You found the shortcut — here's what's coming", previewText: 'The content strategy most operators never use.', html: tplWelcome(firstName || '') }).catch(e => console.error('[capture] welcome:', e.message));
+  let welcomeEmailSent = false;
+  try {
+    const out = await sendEmail({ to: norm, subject: "You found the shortcut — here's what's coming", previewText: 'The content strategy most operators never use.', html: tplWelcome(firstName || '') });
+    welcomeEmailSent = Boolean(out && !out.error);
+  } catch (e) {
+    console.error('[capture] welcome:', e.message);
+  }
   console.log(`[funnel] subscribed: ${norm} via ${source}`);
-  return res.status(200).json({ status: 'subscribed' });
+  return res.status(200).json({ status: 'subscribed', email: { welcomeEmailSent } });
 }
 
 async function rLeadsCreate(req, res) {
   const { email, name, leadScore, intentTier, recommendedPackage, userAnswers, source_url } = req.body || {};
   if (!email) return res.status(400).json({ error: 'Email required' });
   const leadId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const lead = {
+    id: leadId,
+    created_at: new Date().toISOString(),
+    name: name || '',
+    email: String(email).toLowerCase(),
+    lead_score: Number.isFinite(Number(leadScore)) ? Number(leadScore) : 0,
+    intent_tier: intentTier || 'cold',
+    recommended_package: recommendedPackage || null,
+    recommended_next_step: null,
+    answers_json: JSON.stringify(userAnswers || {}),
+    source_url: source_url || ''
+  };
   console.log('[lead]', { leadId, email, leadScore, intentTier });
+  await appendLead(lead).catch((e) => console.error('[lead] kv store:', e.message));
+  let adminAlertSent = false;
+  let leadConfirmSent = false;
   if (intentTier === 'hot') {
-    await sendEmail({ to: ADMIN_EMAIL, subject: `🔥 HOT Lead — ${name || email} (Score: ${leadScore})`, html: tplLeadAlert({ name, email, score: leadScore, tier: intentTier, pkg: recommendedPackage, source: source_url }) }).catch(e => console.error('[lead] hot alert:', e.message));
+    try {
+      const out = await sendEmail({ to: ADMIN_EMAIL, subject: `🔥 HOT Lead — ${name || email} (Score: ${leadScore})`, html: tplLeadAlert({ name, email, score: leadScore, tier: intentTier, pkg: recommendedPackage, source: source_url }) });
+      adminAlertSent = Boolean(out && !out.error);
+    } catch (e) {
+      console.error('[lead] hot alert:', e.message);
+    }
   }
-  await sendEmail({ to: email, subject: 'Got your message — ShortFormFactory', html: tplContactReply(name || 'there') }).catch(e => console.error('[lead] confirm:', e.message));
-  return res.status(200).json({ success: true, lead_id: leadId });
+  try {
+    const out = await sendEmail({ to: email, subject: 'Got your message — ShortFormFactory', html: tplContactReply(name || 'there') });
+    leadConfirmSent = Boolean(out && !out.error);
+  } catch (e) {
+    console.error('[lead] confirm:', e.message);
+  }
+  return res.status(200).json({ success: true, lead_id: leadId, email: { leadConfirmSent, adminAlertSent } });
+}
+
+async function rLeadsList(req, res) {
+  const leads = await getLeads().catch(() => []);
+  return res.status(200).json(leads);
 }
 
 function rPaypalConfig(req, res) {
   const clientId = process.env.PAYPAL_CLIENT_ID;
-  if (!clientId) return res.status(500).json({ error: 'PayPal not configured' });
+  if (!clientId) return res.status(200).json({ enabled: false, error: 'PayPal not configured' });
   res.setHeader('Cache-Control', 'public, max-age=3600');
-  return res.status(200).json({ clientId, mode: process.env.PAYPAL_MODE || 'sandbox', currency: 'USD' });
+  return res.status(200).json({ enabled: true, clientId, mode: process.env.PAYPAL_MODE || 'sandbox', currency: 'USD' });
 }
 
 async function rCreateOrder(req, res) {
   const { service, package: pkg, addons = [] } = req.body || {};
   if (!service || !pkg) return res.status(400).json({ error: 'service and package required' });
+  if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) return res.status(503).json({ error: 'PayPal checkout unavailable' });
   const total = calcTotal(service, pkg, addons);
   const token = await ppToken();
   const base  = process.env.SITE_URL || req.headers.origin || 'https://shortformfactory.com';
@@ -156,6 +211,7 @@ async function rCreateOrder(req, res) {
 async function rCaptureOrder(req, res) {
   const { orderID } = req.body || {};
   if (!orderID) return res.status(400).json({ error: 'orderID required' });
+  if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) return res.status(503).json({ error: 'PayPal capture unavailable' });
   const token = await ppToken();
   const r = await fetch(`${PP}/v2/checkout/orders/${orderID}/capture`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } });
   const d = await r.json();
@@ -196,12 +252,12 @@ async function rWebhook(req, res) {
 
 function rStripeConfig(req, res) {
   const key = process.env.STRIPE_PUBLISHABLE_KEY;
-  if (!key) return res.status(500).json({ error: 'Stripe not configured' });
-  return res.status(200).json({ publishableKey: key, mode: key.startsWith('pk_live') ? 'live' : 'test' });
+  if (!key) return res.status(200).json({ enabled: false, error: 'Stripe not configured' });
+  return res.status(200).json({ enabled: true, publishableKey: key, mode: key.startsWith('pk_live') ? 'live' : 'test' });
 }
 
 async function rStripeCreate(req, res) {
-  const sk = process.env.STRIPE_SECRET_KEY; if (!sk) return res.status(500).json({ error: 'Stripe not configured' });
+  const sk = process.env.STRIPE_SECRET_KEY; if (!sk) return res.status(503).json({ error: 'Stripe checkout unavailable' });
   const stripe = new Stripe(sk, { apiVersion: '2023-10-16' });
   const { service, package: pkg, addons = [] } = req.body || {};
   if (!service || !pkg) return res.status(400).json({ error: 'service and package required' });
@@ -246,6 +302,7 @@ export default async function handler(req, res) {
     if (url.endsWith('/concierge/track')       && m === 'POST') return rTrack(req, res);
     if (url.endsWith('/capture/email')         && m === 'POST') return await rCaptureEmail(req, res);
     if (url.endsWith('/leads/create')          && m === 'POST') return await rLeadsCreate(req, res);
+    if (url.endsWith('/leads/list')            && m === 'GET')  return await rLeadsList(req, res);
     if (url.endsWith('/paypal/config')         && m === 'GET')  return rPaypalConfig(req, res);
     if (url.endsWith('/create-order')          && m === 'POST') return await rCreateOrder(req, res);
     if (url.endsWith('/capture-order')         && m === 'POST') return await rCaptureOrder(req, res);

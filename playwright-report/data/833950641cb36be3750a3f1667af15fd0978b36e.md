@@ -1,0 +1,250 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "ShortFormFactory ShortFormFactory" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - img "ShortFormFactory" [ref=e5]
+        - generic [ref=e6]: ShortFormFactory
+      - navigation [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "Services" [ref=e9] [cursor=pointer]:
+          - /url: /services
+        - link "Demo" [ref=e10] [cursor=pointer]:
+          - /url: /demo
+        - link "Blog" [ref=e11] [cursor=pointer]:
+          - /url: /blog
+        - link "Order" [ref=e12] [cursor=pointer]:
+          - /url: /order
+        - link "Contact" [ref=e13] [cursor=pointer]:
+          - /url: /contact
+  - main [ref=e14]:
+    - generic [ref=e15]:
+      - heading "Start Your Order" [level=1] [ref=e16]
+      - paragraph [ref=e17]: Select your service, complete secure payment, then submit your project details
+      - generic [ref=e18]:
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - generic [ref=e22]: 🎬 Select Service
+            - combobox "🎬 Select Service" [ref=e23]:
+              - option "Choose your service..." [selected]
+              - option "AI Reel Edit"
+              - option "Social Media Edit"
+              - option "Viral Captions"
+              - option "Podcast / YouTube Repurpose"
+              - option "Auto Captions"
+              - option "Video Trim / Smart Cut"
+              - option "Background Removal"
+              - option "Add Music / Audio Sync"
+          - generic [ref=e24]:
+            - generic [ref=e25]: ⭐ Add-ons (Optional)
+            - generic [ref=e26]:
+              - generic [ref=e27]:
+                - checkbox "Rush Delivery 12-24 hour turnaround +$25" [ref=e28]
+                - generic [ref=e29]: Rush Delivery 12-24 hour turnaround
+                - generic [ref=e30]: +$25
+              - generic [ref=e31]:
+                - checkbox "Extra Clip Add one more clip +$15" [ref=e32]
+                - generic [ref=e33]: Extra Clip Add one more clip
+                - generic [ref=e34]: +$15
+              - generic [ref=e35]:
+                - checkbox "Extra Minute Additional raw footage +$10" [ref=e36]
+                - generic [ref=e37]: Extra Minute Additional raw footage
+                - generic [ref=e38]: +$10
+              - generic [ref=e39]:
+                - checkbox "Premium Captions Advanced animations +$15" [ref=e40]
+                - generic [ref=e41]: Premium Captions Advanced animations
+                - generic [ref=e42]: +$15
+              - generic [ref=e43]:
+                - checkbox "Color Grading Professional color +$20" [ref=e44]
+                - generic [ref=e45]: Color Grading Professional color
+                - generic [ref=e46]: +$20
+              - generic [ref=e47]:
+                - checkbox "Advanced Effects Premium VFX +$25" [ref=e48]
+                - generic [ref=e49]: Advanced Effects Premium VFX
+                - generic [ref=e50]: +$25
+              - generic [ref=e51]:
+                - checkbox "Thumbnails 3 custom thumbnails +$20" [ref=e52]
+                - generic [ref=e53]: Thumbnails 3 custom thumbnails
+                - generic [ref=e54]: +$20
+              - generic [ref=e55]:
+                - checkbox "Music Licensing You provide track +$10" [ref=e56]
+                - generic [ref=e57]: Music Licensing You provide track
+                - generic [ref=e58]: +$10
+              - generic [ref=e59]:
+                - checkbox "Source Files Project files included +$15" [ref=e60]
+                - generic [ref=e61]: Source Files Project files included
+                - generic [ref=e62]: +$15
+          - generic [ref=e63]:
+            - generic [ref=e64]: 📝 Initial Notes (Optional)
+            - textbox "📝 Initial Notes (Optional)" [ref=e65]:
+              - /placeholder: Optional quick notes (links, style refs, timing cues). These notes will be included in your intake email after payment.
+            - generic [ref=e66]: Anything you type here is optional and will be copied into your intake email automatically after payment is confirmed.
+        - complementary [ref=e67]:
+          - generic [ref=e68]:
+            - generic [ref=e70]:
+              - text: 🔒
+              - generic [ref=e71]:
+                - strong [ref=e72]: Secure Payment First
+                - text: Project details after confirmation
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - generic [ref=e75]: Service
+                - generic [ref=e76]: —
+              - generic [ref=e77]:
+                - generic [ref=e78]: Package
+                - generic [ref=e79]: —
+              - generic [ref=e80]:
+                - generic [ref=e81]: Add-ons
+                - generic [ref=e82]: None
+              - generic [ref=e84]:
+                - generic [ref=e85]: Total Amount
+                - generic [ref=e86]: $0.00
+              - generic [ref=e87]:
+                - generic [ref=e88]: 💳 Select Payment Method
+                - generic [ref=e89]:
+                  - generic [ref=e90] [cursor=pointer]:
+                    - radio "PayPal Pay with PayPal balance, bank, or card" [checked] [ref=e91]
+                    - generic [ref=e92]:
+                      - strong [ref=e93]: PayPal
+                      - generic [ref=e94]: Pay with PayPal balance, bank, or card
+                  - generic [ref=e95] [cursor=pointer]:
+                    - radio "Card (Visa, MasterCard, Amex) Processed securely via Stripe" [ref=e96]
+                    - generic [ref=e97]:
+                      - strong [ref=e98]: Card (Visa, MasterCard, Amex)
+                      - generic [ref=e99]: Processed securely via Stripe
+              - generic [ref=e100]: Select a service and package to enable checkout.
+              - iframe [ref=e103]:
+                - generic "PayPal" [ref=f4e2]:
+                  - generic [ref=f4e3]:
+                    - link "PayPal" [ref=f4e5] [cursor=pointer]
+                    - link "Debit or Credit Card" [ref=f4e8] [cursor=pointer]:
+                      - generic [ref=f4e10]: Debit or Credit Card
+                    - generic [ref=f4e12]: Powered by
+              - generic [ref=e104]:
+                - button "📧 Submit Project Details" [disabled] [ref=e105] [cursor=pointer]:
+                  - generic [ref=e106]: 📧
+                  - text: Submit Project Details
+                - paragraph [ref=e107]:
+                  - generic [ref=e108]: 🔒
+                  - text: Complete payment to unlock project submission
+            - generic [ref=e109]:
+              - generic [ref=e110]:
+                - img [ref=e111]
+                - text: Secure PayPal Processing
+              - generic [ref=e113]:
+                - img [ref=e114]
+                - text: Guaranteed Delivery
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - strong [ref=e118]: What Happens Next
+              - paragraph [ref=e119]: After payment, you will be directed to submit your project details including footage links, brand guidelines, and delivery preferences. We begin editing immediately upon receipt.
+            - generic [ref=e120]:
+              - strong [ref=e121]: Revisions Policy
+              - paragraph [ref=e122]: "Basic: 0 revisions | Standard: 1 revision | Premium: 2 revisions. Requests must be within scope and submitted within 7 days of delivery. Out-of-scope changes quoted separately."
+  - contentinfo [ref=e123]:
+    - generic [ref=e124]:
+      - generic [ref=e125]:
+        - generic [ref=e126]:
+          - img "ShortFormFactory" [ref=e127]
+          - heading "ShortFormFactory" [level=3] [ref=e128]
+        - paragraph [ref=e129]: Professional short-form video editing services for agencies, consultants, and professional teams across North America.
+        - generic [ref=e130]:
+          - link "TikTok" [ref=e131] [cursor=pointer]:
+            - /url: https://www.tiktok.com/@short.formfactory
+            - img [ref=e132]
+          - link "YouTube" [ref=e134] [cursor=pointer]:
+            - /url: https://www.youtube.com/@short.formfactory
+            - img [ref=e135]
+          - link "Instagram" [ref=e137] [cursor=pointer]:
+            - /url: https://www.instagram.com/short.formfactory
+            - img [ref=e138]
+          - link "Threads" [ref=e140] [cursor=pointer]:
+            - /url: https://www.threads.net/@short.formfactory
+            - img [ref=e141]
+          - link "Pinterest" [ref=e143] [cursor=pointer]:
+            - /url: https://www.pinterest.com/shortformfactoryhelp
+            - img [ref=e144]
+          - link "Tumblr" [ref=e146] [cursor=pointer]:
+            - /url: https://www.tumblr.com/shortformfactory
+            - img [ref=e147]
+          - link "LinkedIn" [ref=e149] [cursor=pointer]:
+            - /url: https://linkedin.com/in/anthony-m-a1410b3a2
+            - img [ref=e150]
+      - generic [ref=e152]:
+        - heading "Services" [level=3] [ref=e153]
+        - list [ref=e154]:
+          - listitem [ref=e155]:
+            - link "All Services" [ref=e156] [cursor=pointer]:
+              - /url: /services
+          - listitem [ref=e157]:
+            - link "Place Order" [ref=e158] [cursor=pointer]:
+              - /url: /order
+      - generic [ref=e159]:
+        - heading "Company" [level=3] [ref=e160]
+        - list [ref=e161]:
+          - listitem [ref=e162]:
+            - link "About" [ref=e163] [cursor=pointer]:
+              - /url: /about
+          - listitem [ref=e164]:
+            - link "Contact" [ref=e165] [cursor=pointer]:
+              - /url: /contact
+          - listitem [ref=e166]:
+            - link "Demo" [ref=e167] [cursor=pointer]:
+              - /url: /demo
+          - listitem [ref=e168]:
+            - link "Blog" [ref=e169] [cursor=pointer]:
+              - /url: /blog
+      - generic [ref=e170]:
+        - heading "Legal" [level=3] [ref=e171]
+        - list [ref=e172]:
+          - listitem [ref=e173]:
+            - link "Terms of Service" [ref=e174] [cursor=pointer]:
+              - /url: /terms
+          - listitem [ref=e175]:
+            - link "Privacy Policy" [ref=e176] [cursor=pointer]:
+              - /url: /privacy
+          - listitem [ref=e177]:
+            - link "Refund Policy" [ref=e178] [cursor=pointer]:
+              - /url: /refunds
+          - listitem [ref=e179]:
+            - link "Liability Notice" [ref=e180] [cursor=pointer]:
+              - /url: /liability
+    - generic [ref=e181]:
+      - paragraph [ref=e182]: © 2025 ShortFormFactory. All rights reserved.
+      - paragraph [ref=e183]:
+        - text: "Email:"
+        - link "concierge@shortformfactory.com" [ref=e184] [cursor=pointer]:
+          - /url: mailto:concierge@shortformfactory.com
+  - dialog "Cookie consent banner" [ref=e185]:
+    - generic [ref=e186]:
+      - paragraph [ref=e187]:
+        - text: We use cookies to analyze site traffic and improve your experience.
+        - link "Privacy Policy" [ref=e188] [cursor=pointer]:
+          - /url: /privacy
+      - group "Cookie consent options" [ref=e189]:
+        - button "Accept" [ref=e190] [cursor=pointer]
+        - button "Decline" [ref=e191] [cursor=pointer]
+  - generic [ref=e192]:
+    - button "Talk to Concierge" [ref=e193] [cursor=pointer]: 💬
+    - generic [ref=e194]:
+      - generic [ref=e195]:
+        - heading "ShortFormFactory Concierge" [level=3] [ref=e196]
+        - button "Close" [ref=e197] [cursor=pointer]: ×
+      - generic [ref=e198]:
+        - generic [ref=e199]:
+          - generic [ref=e200]:
+            - generic [ref=e201]: 🤖
+            - generic [ref=e202]: Hey! I'm the ShortFormFactory concierge. I can help you explore our services, get a quote, or book a call. What do you need today?
+            - generic [ref=e203]: 11:25 AM
+          - generic [ref=e204]:
+            - generic [ref=e205]: 🤖
+            - generic [ref=e206]: Welcome to ShortFormFactory! I can walk you through our services or get you set up. What do you need today?
+            - generic [ref=e207]: 11:25 AM
+        - generic [ref=e209]:
+          - textbox "Type your message..." [ref=e210]
+          - button "Send" [ref=e211] [cursor=pointer]
+```

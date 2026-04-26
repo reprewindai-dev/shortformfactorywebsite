@@ -5,9 +5,9 @@
   "type": "module",
   "main": "index.html",
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "echo \"Run local with Vercel CLI\"",
     "build": "echo \"Static site - no build needed\"",
-    "start": "vercel dev"
+    "start": "echo \"Run local with Vercel CLI\""
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.9.0",
@@ -23,5 +23,5 @@
   "keywords": ["video editing", "short-form", "social media", "stripe", "paypal", "concierge"],
   "author": "ShortFormFactory",
   "license": "MIT",
-  "engines": { "node": ">=18.0.0" }
+  "engines": { "node": "20.x" }
 }

@@ -543,6 +543,7 @@
         document.getElementById('loginForm').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
         loadDashboard();
+        fetchLeads();
       } else {
         errorDiv.textContent = 'Invalid password';
         errorDiv.style.display = 'block';
@@ -649,7 +650,8 @@
         const response = await fetch('/api/leads/list');
         if (response.ok) {
           allLeads = await response.json();
-          loadDashboard();
+          updateStats();
+          renderLeads();
         }
       } catch (error) {
         console.error('Failed to fetch leads:', error);

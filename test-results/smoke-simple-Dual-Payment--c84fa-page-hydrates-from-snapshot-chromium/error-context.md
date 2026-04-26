@@ -1,0 +1,162 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "ShortFormFactory ShortFormFactory" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - img "ShortFormFactory" [ref=e5]
+        - generic [ref=e6]: ShortFormFactory
+      - navigation [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "Services" [ref=e9] [cursor=pointer]:
+          - /url: /services
+        - link "Demo" [ref=e10] [cursor=pointer]:
+          - /url: /demo
+        - link "Blog" [ref=e11] [cursor=pointer]:
+          - /url: /blog
+        - link "Order" [ref=e12] [cursor=pointer]:
+          - /url: /order
+        - link "Contact" [ref=e13] [cursor=pointer]:
+          - /url: /contact
+  - main [ref=e14]:
+    - generic [ref=e15]:
+      - generic [ref=e16]: ✅
+      - heading "Order Received" [level=1] [ref=e17]
+      - paragraph [ref=e18]: We've got your project details. You'll hear back within 24 hours (business days).
+      - generic [ref=e19]:
+        - heading "Order Summary" [level=3] [ref=e20]
+        - paragraph [ref=e21]: Payment confirmed via Stripe (Card).
+        - generic [ref=e22]:
+          - generic [ref=e23]: "Service:"
+          - generic [ref=e24]: —
+        - generic [ref=e25]:
+          - generic [ref=e26]: "Package:"
+          - generic [ref=e27]: —
+        - generic [ref=e28]:
+          - generic [ref=e29]: "Add-ons:"
+          - generic [ref=e30]: None
+        - generic [ref=e31]:
+          - generic [ref=e32]: "Payment Method:"
+          - generic [ref=e33]: Stripe (Card)
+        - generic [ref=e34]:
+          - generic [ref=e35]: "Payment Reference:"
+          - generic [ref=e36]: cs_test_123456
+        - generic [ref=e37]:
+          - generic [ref=e38]: "Total Paid:"
+          - generic [ref=e39]: $149.00
+      - generic [ref=e40]:
+        - strong [ref=e41]: Need to add anything?
+        - text: Email us at
+        - link "[email protected]" [ref=e42] [cursor=pointer]:
+          - /url: /cdn-cgi/l/email-protection#8dfee5e2fff9ebe2ffe0ebeceef9e2fff4a3e5e8e1fdcdeae0ece4e1a3eee2e0
+      - generic [ref=e43]:
+        - link "Back to Home" [ref=e44] [cursor=pointer]:
+          - /url: /
+        - link "View Services" [ref=e45] [cursor=pointer]:
+          - /url: /services
+  - contentinfo [ref=e46]:
+    - generic [ref=e47]:
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - img "ShortFormFactory" [ref=e50]
+          - heading "ShortFormFactory" [level=3] [ref=e51]
+        - paragraph [ref=e52]: Professional short-form video editing services for agencies, consultants, and professional teams across North America.
+        - generic [ref=e53]:
+          - link "TikTok" [ref=e54] [cursor=pointer]:
+            - /url: https://www.tiktok.com/@short.formfactory
+            - img [ref=e55]
+          - link "YouTube" [ref=e57] [cursor=pointer]:
+            - /url: https://www.youtube.com/@short.formfactory
+            - img [ref=e58]
+          - link "Instagram" [ref=e60] [cursor=pointer]:
+            - /url: https://www.instagram.com/short.formfactory
+            - img [ref=e61]
+          - link "Threads" [ref=e63] [cursor=pointer]:
+            - /url: https://www.threads.net/@short.formfactory
+            - img [ref=e64]
+          - link "Pinterest" [ref=e66] [cursor=pointer]:
+            - /url: https://www.pinterest.com/shortformfactoryhelp
+            - img [ref=e67]
+          - link "Tumblr" [ref=e69] [cursor=pointer]:
+            - /url: https://www.tumblr.com/shortformfactory
+            - img [ref=e70]
+          - link "LinkedIn" [ref=e72] [cursor=pointer]:
+            - /url: https://linkedin.com/in/anthony-m-a1410b3a2
+            - img [ref=e73]
+      - generic [ref=e75]:
+        - heading "Services" [level=3] [ref=e76]
+        - list [ref=e77]:
+          - listitem [ref=e78]:
+            - link "All Services" [ref=e79] [cursor=pointer]:
+              - /url: /services
+          - listitem [ref=e80]:
+            - link "Place Order" [ref=e81] [cursor=pointer]:
+              - /url: /order
+      - generic [ref=e82]:
+        - heading "Company" [level=3] [ref=e83]
+        - list [ref=e84]:
+          - listitem [ref=e85]:
+            - link "About" [ref=e86] [cursor=pointer]:
+              - /url: /about
+          - listitem [ref=e87]:
+            - link "Contact" [ref=e88] [cursor=pointer]:
+              - /url: /contact
+          - listitem [ref=e89]:
+            - link "Demo" [ref=e90] [cursor=pointer]:
+              - /url: /demo
+          - listitem [ref=e91]:
+            - link "Blog" [ref=e92] [cursor=pointer]:
+              - /url: /blog
+      - generic [ref=e93]:
+        - heading "Legal" [level=3] [ref=e94]
+        - list [ref=e95]:
+          - listitem [ref=e96]:
+            - link "Terms of Service" [ref=e97] [cursor=pointer]:
+              - /url: /terms
+          - listitem [ref=e98]:
+            - link "Privacy Policy" [ref=e99] [cursor=pointer]:
+              - /url: /privacy
+          - listitem [ref=e100]:
+            - link "Refund Policy" [ref=e101] [cursor=pointer]:
+              - /url: /refunds
+          - listitem [ref=e102]:
+            - link "Liability Notice" [ref=e103] [cursor=pointer]:
+              - /url: /liability
+    - generic [ref=e104]:
+      - paragraph [ref=e105]: © 2025 ShortFormFactory. All rights reserved.
+      - paragraph [ref=e106]:
+        - text: "Email:"
+        - link "concierge@shortformfactory.com" [ref=e107] [cursor=pointer]:
+          - /url: mailto:concierge@shortformfactory.com
+  - dialog "Cookie consent banner" [ref=e108]:
+    - generic [ref=e109]:
+      - paragraph [ref=e110]:
+        - text: We use cookies to analyze site traffic and improve your experience.
+        - link "Privacy Policy" [ref=e111] [cursor=pointer]:
+          - /url: /privacy
+      - group "Cookie consent options" [ref=e112]:
+        - button "Accept" [ref=e113] [cursor=pointer]
+        - button "Decline" [ref=e114] [cursor=pointer]
+  - generic [ref=e115]:
+    - button "Talk to Concierge" [ref=e116] [cursor=pointer]: 💬
+    - generic [ref=e117]:
+      - generic [ref=e118]:
+        - heading "ShortFormFactory Concierge" [level=3] [ref=e119]
+        - button "Close" [ref=e120] [cursor=pointer]: ×
+      - generic [ref=e121]:
+        - generic [ref=e122]:
+          - generic [ref=e123]:
+            - generic [ref=e124]: 🤖
+            - generic [ref=e125]: Hey! I'm the ShortFormFactory concierge. I can help you explore our services, get a quote, or book a call. What do you need today?
+            - generic [ref=e126]: 11:25 AM
+          - generic [ref=e127]:
+            - generic [ref=e128]: 🤖
+            - generic [ref=e129]: Hi! Need help picking the right editing service or want to book a strategy call? I've got you covered.
+            - generic [ref=e130]: 11:25 AM
+        - generic [ref=e132]:
+          - textbox "Type your message..." [ref=e133]
+          - button "Send" [ref=e134] [cursor=pointer]
+```

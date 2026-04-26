@@ -353,25 +353,20 @@ class ConciergeWidget {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (emailRegex.test(message)) {
         this.userAnswers.email = message;
-
-        // Silent funnel enrollment — fire and forget
-        fetch('/api/capture/email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: message,
-            firstName: this.userAnswers.name || '',
-            source: 'concierge_' + (this.conversationState || 'chat')
-          })
-        }).catch(() => {});
+        let captureEmailStatus = null;
+        try {
+          captureEmailStatus = await this.captureEmail(message);
+        } catch (error) {
+          console.error('Capture email failed:', error);
+        }
         
         // Process based on what triggered email collection
         if (this.conversationState === 'collect_email_for_call') {
           await this.submitBookingRequest();
         } else if (this.conversationState === 'collect_email_for_quote') {
-          await this.submitQuoteRequest();
+          await this.submitQuoteRequest(captureEmailStatus);
         } else if (this.conversationState === 'collect_email_for_template') {
-          await this.submitLeadMagnetRequest();
+          await this.submitLeadMagnetRequest(captureEmailStatus);
         }
         
         this.conversationState = 'completed';
@@ -884,9 +879,9 @@ class ConciergeWidget {
     await this.submitQuoteRequest();
   }
 
-  async submitQuoteRequest() {
+  async submitQuoteRequest(captureEmailStatus = null) {
     try {
-      await this.storeLead({
+      const result = await this.storeLead({
         type: 'quote_request',
         leadScore: this.calculateLeadScore(),
         intentTier: this.getIntentTier(this.calculateLeadScore()),
@@ -896,10 +891,17 @@ class ConciergeWidget {
       
       const pkg = this.recommendPackage();
       const pkgName = pkg.charAt(0).toUpperCase() + pkg.slice(1);
-      this.addMessage('assistant', `📧 Done! I'm sending your custom ${pkgName} package quote to ${this.userAnswers.email}. You'll have it within 24 hours. While you wait, any questions about how we work?`);
+      const confirmed = result?.email?.leadConfirmSent === true;
+      if (confirmed) {
+        this.addMessage('assistant', `📧 Done! I sent your custom ${pkgName} package quote confirmation to ${this.userAnswers.email}. You'll have it within 24 hours. While you wait, any questions about how we work?`);
+      } else {
+        const welcomeConfirmed = captureEmailStatus?.email?.welcomeEmailSent === true;
+        const hint = welcomeConfirmed ? '' : ' I also could not confirm the welcome email send.';
+        this.addMessage('assistant', `I saved your quote request, but email delivery to ${this.userAnswers.email} is not confirmed yet.${hint} Please check spam/promotions, and if it doesn't arrive soon we'll resend manually.`);
+      }
       this.addQuickActions(['How fast is delivery?', 'What\'s included?', 'I\'m all set!']);
     } catch (error) {
-      this.addMessage('assistant', "I'll get that quote ready for you! Any other questions in the meantime?");
+      this.addMessage('assistant', "I saved your quote request, but there was an email delivery issue. Please try again in a moment or contact concierge@shortformfactory.com.");
       this.addQuickActions(['How fast is delivery?', 'What\'s included?']);
     }
   }
@@ -916,51 +918,80 @@ class ConciergeWidget {
     await this.submitLeadMagnetRequest();
   }
 
-  async submitLeadMagnetRequest() {
+  async submitLeadMagnetRequest(captureEmailStatus = null) {
     try {
-      await this.storeLead({
+      const result = await this.storeLead({
         type: 'lead_magnet',
         leadScore: this.calculateLeadScore(),
         intentTier: 'cold',
         userAnswers: this.userAnswers
       });
       
-      this.addMessage('assistant', `📧 Done! I just sent our viral content planning template to ${this.userAnswers.email}. It's the same framework our clients use to 3x their engagement. Once you've had a chance to review it, I'd love to help you put it into action!`);
+      const confirmed = result?.email?.leadConfirmSent === true;
+      if (confirmed) {
+        this.addMessage('assistant', `📧 Done! I sent our viral content planning template to ${this.userAnswers.email}. It's the same framework our clients use to 3x their engagement. Once you've had a chance to review it, I'd love to help you put it into action!`);
+      } else {
+        const welcomeConfirmed = captureEmailStatus?.email?.welcomeEmailSent === true;
+        const hint = welcomeConfirmed ? '' : ' I also could not confirm the welcome email send.';
+        this.addMessage('assistant', `I saved your template request, but email delivery to ${this.userAnswers.email} is not confirmed yet.${hint} Please check spam/promotions, and if it doesn't arrive soon we'll resend manually.`);
+      }
       this.addQuickActions(['Tell me about packages', 'How much does it cost?', 'Thanks, I\'ll check it out']);
     } catch (error) {
-      this.addMessage('assistant', "The template is on its way! Let me know if you have any questions.");
+      this.addMessage('assistant', "I saved your template request, but there was an email delivery issue. Please try again in a moment or contact concierge@shortformfactory.com.");
       this.addQuickActions(['Tell me about packages', 'How much does it cost?']);
     }
   }
 
-  async storeLead(leadData) {
+  async captureEmail(email) {
+    const response = await fetch('/api/capture/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        firstName: this.userAnswers.name || '',
+        source: 'concierge_' + (this.conversationState || 'chat')
+      })
+    });
+
+    let data = {};
     try {
-      await fetch('/api/leads/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...leadData,
-          source_url: window.location.href,
-          utm_params: this.getUTMParams(),
-          user_agent: navigator.userAgent,
-          timestamp: new Date().toISOString()
-        })
-      });
+      data = await response.json();
     } catch (error) {
-      console.error('Failed to store lead:', error);
+      data = {};
     }
+
+    if (!response.ok) {
+      throw new Error(data.error || 'capture_email_failed');
+    }
+    return data;
   }
 
-  async submitQuoteRequest() {
-    // Implementation for quote submission
-    this.trackEvent('quote_submitted');
-  }
+  async storeLead(leadData) {
+    const response = await fetch('/api/leads/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...leadData,
+        source_url: window.location.href,
+        utm_params: this.getUTMParams(),
+        user_agent: navigator.userAgent,
+        timestamp: new Date().toISOString()
+      })
+    });
 
-  async submitLeadMagnetRequest() {
-    // Implementation for lead magnet delivery
-    this.trackEvent('lead_magnet_delivered');
+    let data = {};
+    try {
+      data = await response.json();
+    } catch (error) {
+      data = {};
+    }
+
+    if (!response.ok) {
+      throw new Error(data.error || 'store_lead_failed');
+    }
+    return data;
   }
 
   getUTMParams() {
@@ -984,7 +1015,7 @@ class ConciergeWidget {
     }
     
     // Track to our API
-    fetch('/api/analytics/event', {
+    fetch('/api/concierge/track', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -992,6 +1023,7 @@ class ConciergeWidget {
       body: JSON.stringify({
         event: eventName,
         session_id: this.sessionId,
+        url: window.location.href,
         data: data,
         timestamp: new Date().toISOString()
       })
