@@ -11,6 +11,8 @@
   "rewrites": [
     { "source": "/api/concierge/:path*",   "destination": "/api/index" },
     { "source": "/api/capture/email",      "destination": "/api/index" },
+    { "source": "/api/capture/unsubscribe", "destination": "/api/index" },
+    { "source": "/api/funnel/cron",        "destination": "/api/index" },
     { "source": "/api/leads/:path*",       "destination": "/api/index" },
     { "source": "/api/paypal/config",      "destination": "/api/index" },
     { "source": "/api/paypal/:path*",      "destination": "/api/index" },
@@ -23,26 +25,14 @@
     { "source": "/admin",                  "destination": "/admin.html" },
     { "source": "/blog/:slug",             "destination": "/blog/post-template.html" }
   ],
-  "redirects": [
-    { "source": "/order.html",      "destination": "/order",      "permanent": true },
-    { "source": "/services.html",   "destination": "/services",   "permanent": true },
-    { "source": "/contact.html",    "destination": "/contact",    "permanent": true },
-    { "source": "/about.html",      "destination": "/about",      "permanent": true },
-    { "source": "/terms.html",      "destination": "/terms",      "permanent": true },
-    { "source": "/privacy.html",    "destination": "/privacy",    "permanent": true },
-    { "source": "/refunds.html",    "destination": "/refunds",    "permanent": true },
-    { "source": "/liability.html",  "destination": "/liability",  "permanent": true },
-    { "source": "/thank-you.html",  "destination": "/thank-you",  "permanent": true },
-    { "source": "/404.html",        "destination": "/404",        "permanent": true }
-  ],
-  "headers": [
-    { "source": "/(.*)\\.(css|js)",   "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
-    { "source": "/assets/(.*)",       "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
-    { "source": "/(.*)\\.(svg|png|jpg|jpeg|webp|gif|ico)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
-    { "source": "/(.*)\\.(woff|woff2|ttf|otf)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
-    { "source": "/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }] }
-  ],
-  "crons": [
-    { "path": "/api/funnel/cron", "schedule": "0 9 * * *" }
+  "routes": [
+    { "src": "/faq", "dest": "/faq/index.html" },
+    { "src": "/faq/", "dest": "/faq/index.html" },
+    { "src": "/trademark", "dest": "/trademark/index.html" },
+    { "src": "/trademark/", "dest": "/trademark/index.html" },
+    { "src": "/terms", "dest": "/terms/index.html" },
+    { "src": "/terms/", "dest": "/terms/index.html" },
+    { "src": "/privacy", "dest": "/privacy/index.html" },
+    { "src": "/privacy/", "dest": "/privacy/index.html" }
   ]
 }
